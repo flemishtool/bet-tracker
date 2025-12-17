@@ -7,7 +7,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Bet Tracker">
     <meta name="theme-color" content="#0f0f1a">
+    <meta name="description" content="21-Day Betting Challenge Tracker - Track your compound betting progress">
     <title>21-Day Betting Challenge</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIjIxLURheSBCZXR0aW5nIENoYWxsZW5nZSIsCiAgInNob3J0X25hbWUiOiAiQmV0IFRyYWNrZXIiLAogICJkZXNjcmlwdGlvbiI6ICJUcmFjayB5b3VyIDIxLWRheSBjb21wb3VuZCBiZXR0aW5nIGNoYWxsZW5nZSIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMGYwZjFhIiwKICAidGhlbWVfY29sb3IiOiAiIzAwZDRhYSIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjx0ZXh0IHk9Jy45ZW0nIGZvbnQtc2l6ZT0nOTAnPvCfjq88L3RleHQ+PC9zdmc+IiwKICAgICAgInNpemVzIjogImFueSIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -42,6 +47,19 @@
             --border-light: #3d3d5c;
         }
 
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e8ecf1;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a2e;
+            --text-secondary: #5a5a7a;
+            --text-muted: #8a8aa8;
+            --border-color: #d0d5dd;
+            --border-light: #e0e5ed;
+        }
+
         html {
             scroll-behavior: smooth;
         }
@@ -52,6 +70,7 @@
             color: var(--text-primary);
             min-height: 100vh;
             line-height: 1.5;
+            transition: background 0.3s, color 0.3s;
         }
 
         /* ==================== LAYOUT ==================== */
@@ -126,6 +145,12 @@
             background-clip: text;
         }
 
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .sync-badge {
             display: flex;
             align-items: center;
@@ -145,6 +170,20 @@
         .sync-dot.synced { background: var(--accent-green); }
         .sync-dot.syncing { background: var(--accent-orange); animation: pulse 1s infinite; }
         .sync-dot.offline { background: var(--accent-red); }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-blue);
+        }
 
         .header-stats {
             display: flex;
@@ -258,6 +297,8 @@
             margin-bottom: 12px;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .card-title {
@@ -272,27 +313,146 @@
             display: flex;
             gap: 8px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .card.full-width {
             grid-column: 1 / -1;
         }
 
-        /* ==================== TABS ==================== */
+        /* ==================== FILTERS BAR ==================== */
+        .filters-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .filter-input {
+            padding: 6px 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            min-width: 80px;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        .filter-select {
+            padding: 6px 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        .date-input {
+            padding: 6px 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.75rem;
+        }
+
+        .date-input::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        [data-theme="light"] .date-input::-webkit-calendar-picker-indicator {
+            filter: none;
+        }
+
+        /* ==================== TABS - FIXED ==================== */
         .tabs-container {
             margin-bottom: 12px;
+            position: relative;
+        }
+
+        .tabs-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tabs-scroll-btn {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 30px;
+            background: linear-gradient(90deg, var(--bg-secondary), transparent);
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            z-index: 5;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .tabs-scroll-btn:hover {
+            opacity: 1;
+        }
+
+        .tabs-scroll-btn.left {
+            left: 0;
+            background: linear-gradient(90deg, var(--bg-secondary) 50%, transparent);
+        }
+
+        .tabs-scroll-btn.right {
+            right: 0;
+            background: linear-gradient(-90deg, var(--bg-secondary) 50%, transparent);
         }
 
         .tabs {
             display: flex;
             gap: 5px;
             overflow-x: auto;
-            padding-bottom: 8px;
+            padding: 4px 35px;
             -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
         }
 
         .tabs::-webkit-scrollbar {
-            display: none;
+            height: 3px;
+        }
+
+        .tabs::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+        }
+
+        .tabs::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 2px;
         }
 
         .tab {
@@ -327,6 +487,19 @@
             padding-right: 5px;
         }
 
+        .fixtures-date-header {
+            background: var(--bg-tertiary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .fixture-card {
             background: var(--bg-tertiary);
             border-radius: 10px;
@@ -345,6 +518,16 @@
         .fixture-card.has-selection {
             border-color: var(--accent-orange);
             background: rgba(255, 159, 67, 0.08);
+        }
+
+        .fixture-card.live {
+            border-color: var(--accent-red);
+            animation: livePulse 2s infinite;
+        }
+
+        @keyframes livePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); }
+            50% { box-shadow: 0 0 0 4px rgba(255, 107, 107, 0); }
         }
 
         .fixture-header {
@@ -370,6 +553,12 @@
             background: var(--bg-secondary);
             padding: 3px 8px;
             border-radius: 4px;
+        }
+
+        .fixture-time.live {
+            background: var(--accent-red);
+            color: white;
+            animation: pulse 1.5s infinite;
         }
 
         .fixture-teams {
@@ -410,6 +599,13 @@
             text-overflow: ellipsis;
         }
 
+        .fixture-score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 0 15px;
+            color: var(--accent-green);
+        }
+
         .fixture-vs {
             font-size: 0.8rem;
             color: var(--text-muted);
@@ -442,6 +638,10 @@
 
         .odds-grid.grid-2 {
             grid-template-columns: repeat(2, 1fr);
+        }
+
+        .odds-grid.grid-6 {
+            grid-template-columns: repeat(6, 1fr);
         }
 
         .odd-btn {
@@ -689,6 +889,65 @@
         .betslip-stake-input:focus {
             outline: none;
             border-color: var(--accent-green);
+        }
+
+        /* Confidence Selector */
+        .confidence-selector {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .confidence-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .confidence-options {
+            display: flex;
+            gap: 6px;
+        }
+
+        .confidence-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .confidence-btn:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .confidence-btn.active {
+            border-color: var(--accent-green);
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--accent-green);
+        }
+
+        .confidence-btn.low.active {
+            border-color: var(--accent-red);
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--accent-red);
+        }
+
+        .confidence-btn.medium.active {
+            border-color: var(--accent-orange);
+            background: rgba(255, 159, 67, 0.1);
+            color: var(--accent-orange);
+        }
+
+        .confidence-btn.high.active {
+            border-color: var(--accent-green);
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--accent-green);
         }
 
         .betslip-submit {
@@ -1140,6 +1399,12 @@
             border-top: 1px solid var(--border-color);
         }
 
+        .pending-confidence {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
         /* ==================== BUTTONS ==================== */
         .btn {
             padding: 8px 16px;
@@ -1364,6 +1629,26 @@
             animation: pulse 1.5s infinite;
         }
 
+        .badge-confidence {
+            font-size: 0.55rem;
+            padding: 2px 6px;
+        }
+
+        .badge-confidence.low {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--accent-red);
+        }
+
+        .badge-confidence.medium {
+            background: rgba(255, 159, 67, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .badge-confidence.high {
+            background: rgba(0, 212, 170, 0.2);
+            color: var(--accent-green);
+        }
+
         /* ==================== CHART ==================== */
         .chart-container {
             height: 200px;
@@ -1493,6 +1778,15 @@
         .api-dot.loading { background: var(--accent-orange); animation: pulse 1s infinite; }
         .api-dot.offline { background: var(--accent-red); }
 
+        /* ==================== NO FIXTURES MESSAGE ==================== */
+        .no-fixtures-msg {
+            background: var(--bg-tertiary);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
         /* ==================== SCROLLBAR ==================== */
         ::-webkit-scrollbar {
             width: 6px;
@@ -1511,6 +1805,40 @@
 
         ::-webkit-scrollbar-thumb:hover {
             background: var(--accent-green);
+        }
+
+        /* ==================== INSTALL PROMPT ==================== */
+        .install-prompt {
+            position: fixed;
+            bottom: 80px;
+            left: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            padding: 15px;
+            border-radius: 12px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 90;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .install-prompt.show {
+            display: flex;
+        }
+
+        .install-prompt-text {
+            flex: 1;
+            font-size: 0.85rem;
+        }
+
+        .install-prompt-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.7;
         }
 
         /* ==================== RESPONSIVE ==================== */
@@ -1535,6 +1863,25 @@
             .analytics-grid {
                 grid-template-columns: 1fr;
             }
+
+            .filters-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .odds-grid.grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .odds-grid.grid-6 {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
     </style>
 </head>
@@ -1546,9 +1893,12 @@
             <div class="header">
                 <div class="header-left">
                     <h1>🎯 21-Day Betting Challenge</h1>
-                    <div class="sync-badge">
-                        <div class="sync-dot offline" id="syncDot"></div>
-                        <span id="syncText">Connecting...</span>
+                    <div class="header-controls">
+                        <div class="sync-badge">
+                            <div class="sync-dot offline" id="syncDot"></div>
+                            <span id="syncText">Connecting...</span>
+                        </div>
+                        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" id="themeToggle">🌙</button>
                     </div>
                 </div>
                 <div class="header-stats">
@@ -1604,7 +1954,7 @@
                 <!-- Fixtures Card -->
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">⚽ Today's Fixtures</span>
+                        <span class="card-title">⚽ Fixtures</span>
                         <div class="card-actions">
                             <div class="api-status">
                                 <div class="api-dot loading" id="apiDot"></div>
@@ -1613,9 +1963,49 @@
                             <button class="btn btn-sm btn-secondary" onclick="loadFixtures(true)" title="Refresh">🔄</button>
                         </div>
                     </div>
-                    <div class="tabs-container">
-                        <div class="tabs" id="leagueTabs"></div>
+
+                    <!-- Filters Bar -->
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <span class="filter-label">Date:</span>
+                            <input type="date" class="date-input" id="dateFilter" onchange="applyFilters()">
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Status:</span>
+                            <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+                                <option value="all">All</option>
+                                <option value="upcoming">Upcoming</option>
+                                <option value="live">Live</option>
+                                <option value="finished">Finished</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Odds:</span>
+                            <input type="number" class="filter-input" id="minOdds" placeholder="Min" step="0.1" min="1" oninput="applyFilters()" style="width:60px;">
+                            <span>-</span>
+                            <input type="number" class="filter-input" id="maxOdds" placeholder="Max" step="0.1" min="1" oninput="applyFilters()" style="width:60px;">
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Sort:</span>
+                            <select class="filter-select" id="sortFilter" onchange="applyFilters()">
+                                <option value="time">Kick-off Time</option>
+                                <option value="oddsLow">Odds: Low → High</option>
+                                <option value="oddsHigh">Odds: High → Low</option>
+                                <option value="league">League</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-sm btn-secondary" onclick="clearFilters()">Clear</button>
                     </div>
+
+                    <!-- League Tabs -->
+                    <div class="tabs-container">
+                        <div class="tabs-wrapper">
+                            <button class="tabs-scroll-btn left" onclick="scrollTabs(-200)">◀</button>
+                            <div class="tabs" id="leagueTabs"></div>
+                            <button class="tabs-scroll-btn right" onclick="scrollTabs(200)">▶</button>
+                        </div>
+                    </div>
+                    
                     <div class="fixtures-container" id="fixturesContainer">
                         <div class="loading"><div class="spinner"></div></div>
                     </div>
@@ -1786,6 +2176,7 @@
                                     <th>Date</th>
                                     <th>Selection</th>
                                     <th>Type</th>
+                                    <th>Conf</th>
                                     <th>Odds</th>
                                     <th>Stake</th>
                                     <th>Result</th>
@@ -1832,6 +2223,13 @@
         <div id="mobileBetslipContent"></div>
     </div>
 
+    <!-- PWA Install Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-prompt-text">📱 Install this app for quick access!</div>
+        <button class="btn btn-sm btn-success" onclick="installPWA()">Install</button>
+        <button class="install-prompt-close" onclick="dismissInstallPrompt()">×</button>
+    </div>
+
     <!-- Result Modal -->
     <div class="modal-overlay" id="resultModal">
         <div class="modal">
@@ -1851,7 +2249,8 @@
             <button class="btn btn-secondary mt-1" onclick="recordResult('void')" style="width:100%">⚪ Void (Stake Returned)</button>
         </div>
     </div>
-	    <!-- JavaScript -->
+
+    <!-- JavaScript -->
     <script>
         // ============================================================
         // CONFIGURATION
@@ -1897,61 +2296,61 @@
             { amount: 9201, label: 'Challenge Complete!', emoji: '🏆' }
         ];
 
-        // League Configuration
+        // League Configuration - Complete List
         const LEAGUES = {
             // England
             39: { name: 'Premier League', short: 'EPL', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 1 },
             40: { name: 'Championship', short: 'Champ', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 6 },
             41: { name: 'League One', short: 'L1 ENG', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 20 },
             42: { name: 'League Two', short: 'L2 ENG', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 21 },
-            45: { name: 'FA Cup', short: 'FA Cup', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 25 },
-            48: { name: 'EFL Cup', short: 'EFL Cup', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 26 },
+            45: { name: 'FA Cup', short: 'FA Cup', flag: '🏆', priority: 25 },
+            48: { name: 'EFL Cup', short: 'EFL Cup', flag: '🏆', priority: 26 },
             
             // Spain
             140: { name: 'La Liga', short: 'La Liga', flag: '🇪🇸', priority: 2 },
             141: { name: 'La Liga 2', short: 'Liga 2', flag: '🇪🇸', priority: 7 },
-            143: { name: 'Copa del Rey', short: 'Copa', flag: '🇪🇸', priority: 27 },
+            143: { name: 'Copa del Rey', short: 'Copa', flag: '🏆', priority: 27 },
             
             // Germany
             78: { name: 'Bundesliga', short: 'Bund', flag: '🇩🇪', priority: 3 },
             79: { name: '2. Bundesliga', short: 'Bund 2', flag: '🇩🇪', priority: 8 },
-            81: { name: 'DFB Pokal', short: 'DFB', flag: '🇩🇪', priority: 28 },
+            81: { name: 'DFB Pokal', short: 'DFB', flag: '🏆', priority: 28 },
             
             // Italy
             135: { name: 'Serie A', short: 'Serie A', flag: '🇮🇹', priority: 4 },
             136: { name: 'Serie B', short: 'Serie B', flag: '🇮🇹', priority: 9 },
-            137: { name: 'Coppa Italia', short: 'Coppa IT', flag: '🇮🇹', priority: 29 },
+            137: { name: 'Coppa Italia', short: 'Coppa', flag: '🏆', priority: 29 },
             
             // France
             61: { name: 'Ligue 1', short: 'Ligue 1', flag: '🇫🇷', priority: 5 },
             62: { name: 'Ligue 2', short: 'Ligue 2', flag: '🇫🇷', priority: 10 },
-            66: { name: 'Coupe de France', short: 'CdF', flag: '🇫🇷', priority: 30 },
+            66: { name: 'Coupe de France', short: 'CdF', flag: '🏆', priority: 30 },
             
             // Portugal
             94: { name: 'Primeira Liga', short: 'PT Liga', flag: '🇵🇹', priority: 11 },
-            96: { name: 'Taça Portugal', short: 'Taça', flag: '🇵🇹', priority: 31 },
+            96: { name: 'Taça Portugal', short: 'Taça', flag: '🏆', priority: 31 },
             
             // Netherlands
             88: { name: 'Eredivisie', short: 'Ere', flag: '🇳🇱', priority: 12 },
-            90: { name: 'KNVB Beker', short: 'KNVB', flag: '🇳🇱', priority: 32 },
+            90: { name: 'KNVB Beker', short: 'KNVB', flag: '🏆', priority: 32 },
             
             // Belgium
             144: { name: 'Jupiler Pro', short: 'BEL', flag: '🇧🇪', priority: 13 },
-            147: { name: 'Belgian Cup', short: 'BE Cup', flag: '🇧🇪', priority: 33 },
+            147: { name: 'Belgian Cup', short: 'BE Cup', flag: '🏆', priority: 33 },
             
             // Turkey
             203: { name: 'Süper Lig', short: 'TSL', flag: '🇹🇷', priority: 14 },
-            206: { name: 'Turkish Cup', short: 'TR Cup', flag: '🇹🇷', priority: 34 },
+            206: { name: 'Turkish Cup', short: 'TR Cup', flag: '🏆', priority: 34 },
             
             // Scotland
             179: { name: 'Premiership', short: 'SPFL', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', priority: 15 },
-            183: { name: 'Scottish Cup', short: 'SC Cup', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', priority: 35 },
+            183: { name: 'Scottish Cup', short: 'SC Cup', flag: '🏆', priority: 35 },
             
             // Other Top Leagues
             218: { name: 'Bundesliga AT', short: 'AUT', flag: '🇦🇹', priority: 16 },
-            207: { name: 'Super League', short: 'SUI', flag: '🇨🇭', priority: 17 },
-            197: { name: 'Super League', short: 'GRE', flag: '🇬🇷', priority: 18 },
-            119: { name: 'Superliga', short: 'DEN', flag: '🇩🇰', priority: 19 },
+            207: { name: 'Super League CH', short: 'SUI', flag: '🇨🇭', priority: 17 },
+            197: { name: 'Super League GR', short: 'GRE', flag: '🇬🇷', priority: 18 },
+            119: { name: 'Superliga DK', short: 'DEN', flag: '🇩🇰', priority: 19 },
             307: { name: 'Saudi Pro League', short: 'SPL', flag: '🇸🇦', priority: 22 },
             
             // European Competitions
@@ -1986,8 +2385,8 @@
             under45: 'Under 4.5 Goals',
             bttsYes: 'Both Teams to Score',
             bttsNo: 'BTTS No',
-            homeClean: 'Home Win to Nil',
-            awayClean: 'Away Win to Nil',
+            homeClean: 'Home Clean Sheet',
+            awayClean: 'Away Clean Sheet',
             homeOver15: 'Home Win & O1.5',
             awayOver15: 'Away Win & O1.5'
         };
@@ -2000,6 +2399,7 @@
         let userId = null;
         let isOnline = false;
         let syncPending = false;
+        let deferredPrompt = null;
 
         // Pre-loaded with Day 1 and Day 2 results
         let challengeData = {
@@ -2046,10 +2446,10 @@
                         },
                         {
                             match: "CD Guadalajara vs Barcelona",
-                            selection: "Home Win & Over 1.5",
+                            selection: "Away Win & Over 1.5",
                             odds: 1.15,
                             league: "Copa del Rey",
-                            market: "homeOver15"
+                            market: "awayOver15"
                         }
                     ],
                     selection: "Chelsea Win + Barcelona & O1.5",
@@ -2070,16 +2470,28 @@
             settings: {
                 initialBalance: 200,
                 dailyTarget: 1.20,
-                targetDays: 21
+                targetDays: 21,
+                theme: 'dark'
             }
         };
 
         let allFixtures = [];
+        let filteredFixtures = [];
         let fixturesCache = { data: [], timestamp: 0 };
         let oddsCache = {};
         let betslip = [];
         let currentLeagueFilter = 'all';
         let selectedBetId = null;
+        let selectedConfidence = 'medium';
+
+        // Filter state
+        let filters = {
+            date: '',
+            status: 'all',
+            minOdds: null,
+            maxOdds: null,
+            sort: 'time'
+        };
 
         // ============================================================
         // UTILITIES
@@ -2121,6 +2533,57 @@
 
         function escapeHtml(str) {
             return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
+        }
+
+        function getToday() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        // ============================================================
+        // THEME
+        // ============================================================
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            document.getElementById('themeToggle').textContent = newTheme === 'light' ? '☀️' : '🌙';
+            challengeData.settings.theme = newTheme;
+            localStorage.setItem('theme', newTheme);
+            saveData();
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || challengeData.settings?.theme || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.getElementById('themeToggle').textContent = savedTheme === 'light' ? '☀️' : '🌙';
+        }
+
+        // ============================================================
+        // PWA INSTALL
+        // ============================================================
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.add('show');
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choice) => {
+                    if (choice.outcome === 'accepted') {
+                        notify('App installed!', 'success');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installPrompt').classList.remove('show');
+                });
+            }
+        }
+
+        function dismissInstallPrompt() {
+            document.getElementById('installPrompt').classList.remove('show');
         }
 
         // ============================================================
@@ -2228,6 +2691,7 @@
                 }
             }
             
+            loadTheme();
             updateAllUI();
         }
 
@@ -2278,7 +2742,7 @@
                         currentBalance: INITIAL_BALANCE,
                         bets: [],
                         pendingBets: [],
-                        settings: { initialBalance: INITIAL_BALANCE, dailyTarget: DAILY_MULTIPLIER, targetDays: TARGET_DAYS }
+                        settings: { initialBalance: INITIAL_BALANCE, dailyTarget: DAILY_MULTIPLIER, targetDays: TARGET_DAYS, theme: 'dark' }
                     };
                     
                     saveData();
@@ -2325,8 +2789,7 @@
                 apiDot.className = 'api-dot online';
                 apiText.textContent = `${fixturesCache.data.length} cached`;
                 allFixtures = fixturesCache.data;
-                buildLeagueTabs();
-                renderFixtures();
+                applyFilters();
                 return;
             }
 
@@ -2338,10 +2801,21 @@
             
             log('Fetching fixtures...');
 
+            // Get date for API call (use filter date if set, otherwise get next 7 days)
+            const targetDate = filters.date || getToday();
+
             try {
                 for (const lid of FETCH_LEAGUES) {
                     try {
-                        const response = await apiCall(`/fixtures?league=${lid}&next=10`);
+                        let response;
+                        if (filters.date) {
+                            // Fetch for specific date
+                            response = await apiCall(`/fixtures?league=${lid}&date=${filters.date}`);
+                        } else {
+                            // Fetch next 10 fixtures
+                            response = await apiCall(`/fixtures?league=${lid}&next=10`);
+                        }
+                        
                         if (response && response.length > 0) {
                             allFixtures.push(...response);
                             log(`✓ ${LEAGUES[lid]?.short || lid}: ${response.length}`);
@@ -2363,8 +2837,7 @@
                 apiDot.className = 'api-dot online';
                 apiText.textContent = `${allFixtures.length} fixtures`;
                 
-                buildLeagueTabs();
-                renderFixtures();
+                applyFilters();
                 saveData();
 
                 if (allFixtures.length === 0) {
@@ -2385,6 +2858,12 @@
                     </div>
                 `;
             }
+        }
+
+        async function loadFixturesByDate(date) {
+            filters.date = date;
+            fixturesCache.timestamp = 0; // Force refresh
+            await loadFixtures(true);
         }
 
         async function loadAllOdds() {
@@ -2435,35 +2914,13 @@
 
         function parseOdds(oddsData) {
             const result = {
-                // Match Winner
-                home: null,
-                draw: null,
-                away: null,
-                // Double Chance
-                homeOrDraw: null,
-                awayOrDraw: null,
-                homeOrAway: null,
-                // Goals Over/Under
-                over05: null,
-                over15: null,
-                over25: null,
-                over35: null,
-                over45: null,
-                under05: null,
-                under15: null,
-                under25: null,
-                under35: null,
-                under45: null,
-                // Both Teams Score
-                bttsYes: null,
-                bttsNo: null,
-                // Clean Sheet / Win to Nil
-                homeClean: null,
-                awayClean: null,
-                // Combo markets
-                homeOver15: null,
-                awayOver15: null,
-                // Meta
+                home: null, draw: null, away: null,
+                homeOrDraw: null, awayOrDraw: null, homeOrAway: null,
+                over05: null, over15: null, over25: null, over35: null, over45: null,
+                under05: null, under15: null, under25: null, under35: null, under45: null,
+                bttsYes: null, bttsNo: null,
+                homeClean: null, awayClean: null,
+                homeOver15: null, awayOver15: null,
                 bookmaker: null
             };
 
@@ -2471,7 +2928,6 @@
                 return result;
             }
 
-            // Find preferred bookmaker (Coral first)
             let bookmaker = null;
             for (const pref of PREFERRED_BOOKMAKERS) {
                 bookmaker = oddsData.bookmakers.find(b => b.name.toLowerCase().includes(pref.toLowerCase()));
@@ -2566,11 +3022,211 @@
         }
 
         // ============================================================
+        // FILTERS & SORTING
+        // ============================================================
+
+        function applyFilters() {
+            let fixtures = [...allFixtures];
+            
+            // Date filter
+            if (filters.date) {
+                fixtures = fixtures.filter(f => f.fixture.date.split('T')[0] === filters.date);
+            }
+
+            // Status filter
+            if (filters.status !== 'all') {
+                fixtures = fixtures.filter(f => {
+                    const status = f.fixture.status.short;
+                    if (filters.status === 'upcoming') return ['NS', 'TBD', 'PST'].includes(status);
+                    if (filters.status === 'live') return ['1H', '2H', 'HT', 'ET', 'P', 'BT', 'LIVE'].includes(status);
+                    if (filters.status === 'finished') return ['FT', 'AET', 'PEN', 'AWD', 'WO'].includes(status);
+                    return true;
+                });
+            }
+
+            // Odds filter
+            if (filters.minOdds || filters.maxOdds) {
+                fixtures = fixtures.filter(f => {
+                    const odds = getOddsForFixture(f.fixture.id);
+                    if (!odds || !odds.home) return false;
+                    
+                    const minOdd = Math.min(odds.home || 99, odds.away || 99);
+                    
+                    if (filters.minOdds && minOdd < filters.minOdds) return false;
+                    if (filters.maxOdds && minOdd > filters.maxOdds) return false;
+                    return true;
+                });
+            }
+
+            // League filter
+            if (currentLeagueFilter !== 'all') {
+                fixtures = fixtures.filter(f => f.league.id == currentLeagueFilter);
+            }
+
+            // Sorting
+            switch (filters.sort) {
+                case 'time':
+                    fixtures.sort((a, b) => new Date(a.fixture.date) - new Date(b.fixture.date));
+                    break;
+                case 'oddsLow':
+                    fixtures.sort((a, b) => {
+                        const oddsA = getOddsForFixture(a.fixture.id);
+                        const oddsB = getOddsForFixture(b.fixture.id);
+                        const minA = oddsA ? Math.min(oddsA.home || 99, oddsA.away || 99) : 99;
+                        const minB = oddsB ? Math.min(oddsB.home || 99, oddsB.away || 99) : 99;
+                        return minA - minB;
+                    });
+                    break;
+                case 'oddsHigh':
+                    fixtures.sort((a, b) => {
+                        const oddsA = getOddsForFixture(a.fixture.id);
+                        const oddsB = getOddsForFixture(b.fixture.id);
+                        const minA = oddsA ? Math.min(oddsA.home || 99, oddsA.away || 99) : 0;
+                        const minB = oddsB ? Math.min(oddsB.home || 99, oddsB.away || 99) : 0;
+                        return minB - minA;
+                    });
+                    break;
+                case 'league':
+                    fixtures.sort((a, b) => {
+                        const pa = LEAGUES[a.league.id]?.priority || 999;
+                        const pb = LEAGUES[b.league.id]?.priority || 999;
+                        return pa - pb;
+                    });
+                    break;
+            }
+
+            filteredFixtures = fixtures;
+            buildLeagueTabs();
+            renderFixtures();
+        }
+
+        function clearFilters() {
+            document.getElementById('dateFilter').value = '';
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('minOdds').value = '';
+            document.getElementById('maxOdds').value = '';
+            document.getElementById('sortFilter').value = 'time';
+            
+            filters = { date: '', status: 'all', minOdds: null, maxOdds: null, sort: 'time' };
+            currentLeagueFilter = 'all';
+            
+            applyFilters();
+        }
+
+        // Update filters from input elements
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set today's date as default
+            document.getElementById('dateFilter').value = getToday();
+        });
+
+        function updateFiltersFromInputs() {
+            filters.date = document.getElementById('dateFilter').value;
+            filters.status = document.getElementById('statusFilter').value;
+            filters.minOdds = parseFloat(document.getElementById('minOdds').value) || null;
+            filters.maxOdds = parseFloat(document.getElementById('maxOdds').value) || null;
+            filters.sort = document.getElementById('sortFilter').value;
+        }
+
+        // Wrapper for filter application
+        window.applyFilters = function() {
+            updateFiltersFromInputs();
+            
+            // If date filter changed and no fixtures for that date, reload
+            if (filters.date && fixturesCache.data.length > 0) {
+                const hasFixturesForDate = allFixtures.some(f => f.fixture.date.split('T')[0] === filters.date);
+                if (!hasFixturesForDate) {
+                    loadFixturesByDate(filters.date);
+                    return;
+                }
+            }
+            
+            let fixtures = [...allFixtures];
+            
+            // Date filter
+            if (filters.date) {
+                fixtures = fixtures.filter(f => f.fixture.date.split('T')[0] === filters.date);
+            }
+
+            // Status filter
+            if (filters.status !== 'all') {
+                fixtures = fixtures.filter(f => {
+                    const status = f.fixture.status.short;
+                    if (filters.status === 'upcoming') return ['NS', 'TBD', 'PST'].includes(status);
+                    if (filters.status === 'live') return ['1H', '2H', 'HT', 'ET', 'P', 'BT', 'LIVE'].includes(status);
+                    if (filters.status === 'finished') return ['FT', 'AET', 'PEN', 'AWD', 'WO'].includes(status);
+                    return true;
+                });
+            }
+
+            // Odds filter
+            if (filters.minOdds || filters.maxOdds) {
+                fixtures = fixtures.filter(f => {
+                    const odds = getOddsForFixture(f.fixture.id);
+                    if (!odds || !odds.home) return true; // Include fixtures without odds
+                    
+                    const minOdd = Math.min(odds.home || 99, odds.away || 99);
+                    
+                    if (filters.minOdds && minOdd < filters.minOdds) return false;
+                    if (filters.maxOdds && minOdd > filters.maxOdds) return false;
+                    return true;
+                });
+            }
+
+            // League filter
+            if (currentLeagueFilter !== 'all') {
+                fixtures = fixtures.filter(f => f.league.id == currentLeagueFilter);
+            }
+
+            // Sorting
+            switch (filters.sort) {
+                case 'time':
+                    fixtures.sort((a, b) => new Date(a.fixture.date) - new Date(b.fixture.date));
+                    break;
+                case 'oddsLow':
+                    fixtures.sort((a, b) => {
+                        const oddsA = getOddsForFixture(a.fixture.id);
+                        const oddsB = getOddsForFixture(b.fixture.id);
+                        const minA = oddsA ? Math.min(oddsA.home || 99, oddsA.away || 99) : 99;
+                        const minB = oddsB ? Math.min(oddsB.home || 99, oddsB.away || 99) : 99;
+                        return minA - minB;
+                    });
+                    break;
+                case 'oddsHigh':
+                    fixtures.sort((a, b) => {
+                        const oddsA = getOddsForFixture(a.fixture.id);
+                        const oddsB = getOddsForFixture(b.fixture.id);
+                        const minA = oddsA ? Math.min(oddsA.home || 99, oddsA.away || 99) : 0;
+                        const minB = oddsB ? Math.min(oddsB.home || 99, oddsB.away || 99) : 0;
+                        return minB - minA;
+                    });
+                    break;
+                case 'league':
+                    fixtures.sort((a, b) => {
+                        const pa = LEAGUES[a.league.id]?.priority || 999;
+                        const pb = LEAGUES[b.league.id]?.priority || 999;
+                        return pa - pb;
+                    });
+                    break;
+            }
+
+            filteredFixtures = fixtures;
+            buildLeagueTabs();
+            renderFixtures();
+        };
+
+        // ============================================================
         // FIXTURES DISPLAY
         // ============================================================
+
+        function scrollTabs(amount) {
+            const tabs = document.getElementById('leagueTabs');
+            tabs.scrollBy({ left: amount, behavior: 'smooth' });
+        }
         
         function buildLeagueTabs() {
             const container = document.getElementById('leagueTabs');
+            
+            // Get leagues from ALL fixtures (not filtered) for tab building
             const leaguesInFixtures = [...new Set(allFixtures.map(f => f.league.id))];
             
             leaguesInFixtures.sort((a, b) => {
@@ -2579,10 +3235,14 @@
                 return pa - pb;
             });
             
-            let html = `<button class="tab ${currentLeagueFilter === 'all' ? 'active' : ''}" onclick="filterByLeague('all')">All (${allFixtures.length})</button>`;
+            // Count for filtered fixtures
+            const allCount = filteredFixtures.length;
+            
+            let html = `<button class="tab ${currentLeagueFilter === 'all' ? 'active' : ''}" onclick="filterByLeague('all')">All (${allCount})</button>`;
             
             leaguesInFixtures.forEach(lid => {
                 const league = LEAGUES[lid] || { short: 'Other', flag: '⚽' };
+                // Count from original allFixtures
                 const count = allFixtures.filter(f => f.league.id === lid).length;
                 html += `<button class="tab ${currentLeagueFilter == lid ? 'active' : ''}" onclick="filterByLeague(${lid})">${league.flag} ${league.short} (${count})</button>`;
             });
@@ -2592,907 +3252,14 @@
 
         function filterByLeague(leagueId) {
             currentLeagueFilter = leagueId;
-            buildLeagueTabs();
-            renderFixtures();
+            applyFilters();
         }
 
         function renderFixtures() {
-            let fixtures = currentLeagueFilter === 'all' 
-                ? allFixtures 
-                : allFixtures.filter(f => f.league.id === currentLeagueFilter);
-            
-            fixtures = fixtures.sort((a, b) => new Date(a.fixture.date) - new Date(b.fixture.date));
-            
+            const fixtures = filteredFixtures;
             const container = document.getElementById('fixturesContainer');
             
             if (!fixtures.length) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📅</div><p>No fixtures</p></div>';
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📅</div><p>No fixtures match your filters</p></div>';
                 return;
             }
-
-            container.innerHTML = fixtures.map(f => {
-                const fix = f.fixture;
-                const teams = f.teams;
-                const league = LEAGUES[f.league.id] || { short: f.league.name?.substring(0,8) || 'Other', flag: '⚽', name: f.league.name };
-                
-                const dt = formatDateTime(fix.date);
-                const homeTeam = teams.home.name;
-                const awayTeam = teams.away.name;
-                const homeEsc = escapeHtml(homeTeam);
-                const awayEsc = escapeHtml(awayTeam);
-                const leagueEsc = escapeHtml(league.name);
-                
-                const hasSelection = betslip.some(s => s.fixtureId === fix.id);
-                const odds = getOddsForFixture(fix.id);
-                const hasOdds = odds && odds.home;
-
-                return `
-                    <div class="fixture-card ${hasSelection ? 'has-selection' : ''}" data-fixture-id="${fix.id}">
-                        <div class="fixture-header">
-                            <span class="fixture-league">${league.flag} ${league.short}</span>
-                            <span class="fixture-time">${dt.date} ${dt.time}</span>
-                        </div>
-                        <div class="fixture-teams">
-                            <div class="fixture-team">
-                                ${teams.home.logo ? `<img src="${teams.home.logo}" class="team-logo" onerror="this.style.display='none'" alt="">` : ''}
-                                <span class="team-name">${homeTeam}</span>
-                            </div>
-                            <span class="fixture-vs">vs</span>
-                            <div class="fixture-team away">
-                                ${teams.away.logo ? `<img src="${teams.away.logo}" class="team-logo" onerror="this.style.display='none'" alt="">` : ''}
-                                <span class="team-name">${awayTeam}</span>
-                            </div>
-                        </div>
-                        ${hasOdds ? renderOddsButtons(fix.id, odds, homeEsc, awayEsc, leagueEsc) : `
-                            <button class="load-odds-btn" onclick="loadSingleFixtureOdds(${fix.id})">
-                                📊 Load Odds
-                            </button>
-                        `}
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderOddsButtons(fixtureId, odds, home, away, league) {
-            const isSelected = (market) => betslip.some(s => s.fixtureId === fixtureId && s.market === market);
-            
-            const oddBtn = (market, label, value) => {
-                if (!value) return '';
-                const selected = isSelected(market) ? 'selected' : '';
-                return `
-                    <div class="odd-btn ${selected}" onclick="toggleSelection(${fixtureId}, '${market}', '${home}', '${away}', ${value}, '${league}')">
-                        <div class="odd-label">${label}</div>
-                        <div class="odd-value">${value.toFixed(2)}</div>
-                    </div>
-                `;
-            };
-
-            let html = `
-                <!-- Match Winner -->
-                <div class="odds-section">
-                    <div class="odds-section-title">Match Result</div>
-                    <div class="odds-grid">
-                        ${oddBtn('home', '1', odds.home)}
-                        ${oddBtn('draw', 'X', odds.draw)}
-                        ${oddBtn('away', '2', odds.away)}
-                    </div>
-                </div>
-            `;
-
-            // Double Chance
-            if (odds.homeOrDraw || odds.awayOrDraw || odds.homeOrAway) {
-                html += `
-                    <div class="odds-section">
-                        <div class="odds-section-title">Double Chance</div>
-                        <div class="odds-grid">
-                            ${oddBtn('homeOrDraw', '1X', odds.homeOrDraw)}
-                            ${oddBtn('homeOrAway', '12', odds.homeOrAway)}
-                            ${oddBtn('awayOrDraw', 'X2', odds.awayOrDraw)}
-                        </div>
-                    </div>
-                `;
-            }
-
-            // Goals Over/Under
-            let goalsHtml = '';
-            if (odds.over05) goalsHtml += oddBtn('over05', 'O0.5', odds.over05);
-            if (odds.over15) goalsHtml += oddBtn('over15', 'O1.5', odds.over15);
-            if (odds.over25) goalsHtml += oddBtn('over25', 'O2.5', odds.over25);
-            if (odds.over35) goalsHtml += oddBtn('over35', 'O3.5', odds.over35);
-            if (odds.under15) goalsHtml += oddBtn('under15', 'U1.5', odds.under15);
-            if (odds.under25) goalsHtml += oddBtn('under25', 'U2.5', odds.under25);
-            if (odds.under35) goalsHtml += oddBtn('under35', 'U3.5', odds.under35);
-            
-            if (goalsHtml) {
-                html += `
-                    <div class="odds-section">
-                        <div class="odds-section-title">Goals</div>
-                        <div class="odds-grid grid-4">${goalsHtml}</div>
-                    </div>
-                `;
-            }
-
-            // BTTS
-            if (odds.bttsYes || odds.bttsNo) {
-                html += `
-                    <div class="odds-section">
-                        <div class="odds-section-title">Both Teams to Score</div>
-                        <div class="odds-grid grid-2">
-                            ${oddBtn('bttsYes', 'Yes', odds.bttsYes)}
-                            ${oddBtn('bttsNo', 'No', odds.bttsNo)}
-                        </div>
-                    </div>
-                `;
-            }
-
-            // Bookmaker tag
-            if (odds.bookmaker) {
-                html += `<div class="bookmaker-tag">Odds via ${odds.bookmaker}</div>`;
-            }
-
-            return html;
-        }
-
-        // ============================================================
-        // BETSLIP
-        // ============================================================
-        
-        function toggleSelection(fixtureId, market, home, away, odds, league) {
-            const idx = betslip.findIndex(s => s.fixtureId === fixtureId && s.market === market);
-            
-            if (idx >= 0) {
-                betslip.splice(idx, 1);
-            } else {
-                betslip.push({
-                    fixtureId,
-                    market,
-                    home,
-                    away,
-                    league,
-                    selection: MARKET_TYPES[market] || market,
-                    odds: parseFloat(odds.toFixed(2)),
-                    match: `${home} vs ${away}`
-                });
-            }
-            
-            renderFixtures();
-            renderBetslip();
-        }
-
-        function updateSlipLegOdds(index, newOdds) {
-            const oddsValue = parseFloat(newOdds);
-            if (oddsValue && oddsValue > 1) {
-                betslip[index].odds = oddsValue;
-                renderBetslip();
-            }
-        }
-
-        function removeSlipLeg(index) {
-            betslip.splice(index, 1);
-            renderFixtures();
-            renderBetslip();
-        }
-
-        function clearBetslip() {
-            betslip = [];
-            renderFixtures();
-            renderBetslip();
-        }
-
-        function renderBetslip() {
-            const desktopContent = document.getElementById('desktopBetslipContent');
-            const mobileContent = document.getElementById('mobileBetslipContent');
-            
-            const html = generateBetslipHTML();
-            
-            desktopContent.innerHTML = html;
-            mobileContent.innerHTML = html;
-            
-            // Update counts
-            document.getElementById('desktopSlipCount').textContent = betslip.length;
-            document.getElementById('mobileSlipCount').textContent = betslip.length;
-            document.getElementById('mobileSlipCountInner').textContent = betslip.length;
-            
-            // Set default stake
-            document.querySelectorAll('.betslip-stake-input').forEach(input => {
-                if (!input.value || input.value === '0') {
-                    input.value = challengeData.currentBalance.toFixed(2);
-                }
-            });
-        }
-
-        function generateBetslipHTML() {
-            if (betslip.length === 0) {
-                return `
-                    <div class="betslip-empty">
-                        <div class="betslip-empty-icon">📝</div>
-                        <p>Click on odds to add selections</p>
-                    </div>
-                `;
-            }
-
-            const combinedOdds = betslip.reduce((acc, s) => acc * s.odds, 1);
-            const types = ['-', 'Single', 'Double', 'Treble', '4-Fold', '5-Fold', '6-Fold', '7-Fold', '8-Fold'];
-            const betType = types[Math.min(betslip.length, 8)] || `${betslip.length}-Fold`;
-            
-            let legsHtml = betslip.map((s, i) => `
-                <div class="betslip-leg">
-                    <button class="betslip-leg-remove" onclick="removeSlipLeg(${i})">×</button>
-                    <div class="betslip-leg-match">${s.match}</div>
-                    <div class="betslip-leg-selection">${s.selection}</div>
-                    <div class="betslip-leg-odds-row">
-                        <span class="betslip-leg-odds-label">Odds:</span>
-                        <input type="number" 
-                               class="betslip-leg-odds-input" 
-                               value="${s.odds.toFixed(2)}" 
-                               step="0.01" 
-                               min="1.01"
-                               onchange="updateSlipLegOdds(${i}, this.value)">
-                    </div>
-                    <div class="betslip-leg-league">${s.league}</div>
-                </div>
-            `).join('');
-
-            return `
-                <div class="betslip-legs">${legsHtml}</div>
-                <div class="betslip-summary">
-                    <div class="betslip-row">
-                        <span>Bet Type</span>
-                        <span>${betType}</span>
-                    </div>
-                    <div class="betslip-row">
-                        <span>Selections</span>
-                        <span>${betslip.length}</span>
-                    </div>
-                    <div class="betslip-row">
-                        <span>Combined Odds</span>
-                        <span class="green" id="combinedOddsDisplay">${combinedOdds.toFixed(2)}</span>
-                    </div>
-                    <div class="betslip-row">
-                        <span>Stake</span>
-                        <input type="number" 
-                               class="betslip-stake-input" 
-                               id="betslipStake"
-                               step="0.01" 
-                               min="0"
-                               oninput="updateBetslipReturns()">
-                    </div>
-                    <div class="betslip-row total">
-                        <span>Potential Returns</span>
-                        <span class="green" id="betslipReturns">£0.00</span>
-                    </div>
-                </div>
-                <button class="betslip-submit" onclick="placeBet()" ${betslip.length === 0 ? 'disabled' : ''}>
-                    📝 Place Bet
-                </button>
-            `;
-        }
-
-        function updateBetslipReturns() {
-            const stakeInputs = document.querySelectorAll('.betslip-stake-input');
-            const returnsDisplays = document.querySelectorAll('#betslipReturns');
-            const combinedOdds = betslip.reduce((acc, s) => acc * s.odds, 1);
-            
-            stakeInputs.forEach((input, i) => {
-                const stake = parseFloat(input.value) || 0;
-                const returns = stake * combinedOdds;
-                if (returnsDisplays[i]) {
-                    returnsDisplays[i].textContent = formatCurrency(returns);
-                }
-            });
-            
-            // Update combined odds display
-            document.querySelectorAll('#combinedOddsDisplay').forEach(el => {
-                el.textContent = combinedOdds.toFixed(2);
-            });
-        }
-
-        function toggleMobileBetslip() {
-            document.getElementById('mobileBetslipPanel').classList.toggle('open');
-        }
-
-        function placeBet() {
-            if (betslip.length === 0) return;
-            
-            const stakeInput = document.querySelector('.betslip-stake-input');
-            const stake = parseFloat(stakeInput?.value) || 0;
-            
-            if (!stake || stake <= 0) {
-                notify('Please enter a valid stake', 'error');
-                return;
-            }
-            
-            if (stake > challengeData.currentBalance) {
-                notify('Stake exceeds your balance!', 'error');
-                return;
-            }
-
-            const combinedOdds = betslip.reduce((acc, s) => acc * s.odds, 1);
-            const types = ['', 'single', 'double', 'treble', 'accumulator'];
-
-            const bet = {
-                id: Date.now(),
-                date: new Date().toISOString().split('T')[0],
-                type: types[Math.min(betslip.length, 4)] || 'accumulator',
-                legs: betslip.map(s => ({
-                    match: s.match,
-                    selection: s.selection,
-                    odds: s.odds,
-                    league: s.league,
-                    market: s.market
-                })),
-                selection: betslip.map(s => s.selection).join(' + '),
-                competition: [...new Set(betslip.map(s => s.league))].join(' / '),
-                odds: parseFloat(combinedOdds.toFixed(2)),
-                stake,
-                confidence: 'medium',
-                status: 'pending'
-            };
-
-            challengeData.pendingBets.push(bet);
-            saveData();
-
-            betslip = [];
-            renderFixtures();
-            renderBetslip();
-            updateAllUI();
-            
-            // Close mobile panel if open
-            document.getElementById('mobileBetslipPanel').classList.remove('open');
-            
-            notify(`${bet.type.charAt(0).toUpperCase() + bet.type.slice(1)} placed @ ${bet.odds.toFixed(2)}!`, 'success');
-        }
-
-        // ============================================================
-        // RESULT RECORDING
-        // ============================================================
-        
-        function openResultModal(betId) {
-            selectedBetId = betId;
-            const bet = challengeData.pendingBets.find(b => b.id === betId);
-            if (!bet) return;
-
-            const legsHtml = bet.legs?.map(l => `
-                <div style="padding:8px 0; border-bottom:1px solid var(--border-color);">
-                    <div style="font-size:0.75rem; color:var(--text-secondary);">${l.match}</div>
-                    <div style="font-size:0.9rem; font-weight:600;">${l.selection}</div>
-                    <div style="font-size:0.8rem; color:var(--accent-green);">@ ${l.odds.toFixed(2)}</div>
-                </div>
-            `).join('') || `<div style="padding:10px 0;">${bet.selection}</div>`;
-
-            document.getElementById('modalBetDetails').innerHTML = `
-                <div style="margin-bottom:15px;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                        <span class="badge badge-pending">${bet.type}</span>
-                        <span style="font-size:0.75rem; color:var(--text-secondary);">${bet.date}</span>
-                    </div>
-                    ${legsHtml}
-                    <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border-color);">
-                        <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
-                            <span>Combined Odds: <strong class="green">${bet.odds.toFixed(2)}</strong></span>
-                            <span>Stake: <strong>${formatCurrency(bet.stake)}</strong></span>
-                        </div>
-                        <div style="text-align:right; font-size:1rem; margin-top:8px;">
-                            Potential Returns: <strong class="green">${formatCurrency(bet.stake * bet.odds)}</strong>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('modalFinalScore').value = '';
-            document.getElementById('resultModal').classList.add('open');
-        }
-
-        function closeModal() {
-            document.getElementById('resultModal').classList.remove('open');
-            selectedBetId = null;
-        }
-
-        function recordResult(result) {
-            const idx = challengeData.pendingBets.findIndex(b => b.id === selectedBetId);
-            if (idx === -1) return;
-
-            const bet = challengeData.pendingBets[idx];
-            bet.status = result;
-            bet.finalScore = document.getElementById('modalFinalScore').value;
-            bet.day = challengeData.bets.length + 1;
-
-            if (result === 'won') {
-                bet.returns = bet.stake * bet.odds;
-                challengeData.currentBalance = bet.returns;
-            } else if (result === 'void') {
-                bet.returns = bet.stake;
-            } else {
-                bet.returns = 0;
-                challengeData.currentBalance = 0;
-            }
-
-            bet.balanceAfter = challengeData.currentBalance;
-            bet.targetForDay = INITIAL_BALANCE * Math.pow(DAILY_MULTIPLIER, bet.day);
-            bet.vsTarget = bet.balanceAfter - bet.targetForDay;
-
-            challengeData.bets.push(bet);
-            challengeData.pendingBets.splice(idx, 1);
-            
-            saveData();
-            closeModal();
-            updateAllUI();
-
-            if (result === 'won') {
-                notify(`🎉 Won! Balance: ${formatCurrency(challengeData.currentBalance)}`, 'success');
-                if (challengeData.currentBalance >= FINAL_TARGET) {
-                    setTimeout(() => notify('🏆 CHALLENGE COMPLETE! Amazing!', 'success'), 1500);
-                }
-            } else if (result === 'void') {
-                notify('Bet voided - stake returned', 'info');
-            } else {
-                notify('❌ Challenge ended', 'error');
-            }
-        }
-
-        function cancelPendingBet(betId) {
-            if (confirm('Cancel this bet?')) {
-                challengeData.pendingBets = challengeData.pendingBets.filter(b => b.id !== betId);
-                saveData();
-                updateAllUI();
-                notify('Bet cancelled', 'success');
-            }
-        }
-
-        // ============================================================
-        // UI UPDATES
-        // ============================================================
-        
-        function updateAllUI() {
-            updateHeader();
-            updateQuickStats();
-            updateProgress();
-            updateMilestones();
-            updateProbability();
-            updateAnalytics();
-            updatePendingBets();
-            updateHistory();
-            updateChart();
-            renderBetslip();
-        }
-
-        function updateHeader() {
-            const currentDay = Math.min(challengeData.bets.length + 1, TARGET_DAYS);
-            document.getElementById('hDay').textContent = `Day ${currentDay}`;
-            document.getElementById('hBalance').textContent = formatCurrency(challengeData.currentBalance);
-            
-            const wins = challengeData.bets.filter(b => b.status === 'won').length;
-            const total = challengeData.bets.filter(b => b.status !== 'void').length;
-            const winRate = total > 0 ? Math.round((wins / total) * 100) : 0;
-            document.getElementById('hWinRate').textContent = `${winRate}%`;
-            
-            const isActive = challengeData.currentBalance > 0 && challengeData.bets.length < TARGET_DAYS;
-            const isComplete = challengeData.currentBalance >= FINAL_TARGET;
-            document.getElementById('hStatus').textContent = isComplete ? '🏆' : isActive ? '🟢' : '🔴';
-        }
-
-        function updateQuickStats() {
-            const profit = challengeData.currentBalance - INITIAL_BALANCE;
-            document.getElementById('qProfit').textContent = formatCurrency(profit);
-            document.getElementById('qProfit').className = `quick-stat-value ${profit >= 0 ? 'green' : 'red'}`;
-            
-            const nextTarget = INITIAL_BALANCE * Math.pow(DAILY_MULTIPLIER, challengeData.bets.length + 1);
-            document.getElementById('qTarget').textContent = formatCurrency(nextTarget);
-            
-            const currentTarget = INITIAL_BALANCE * Math.pow(DAILY_MULTIPLIER, Math.max(challengeData.bets.length, 1));
-            const daysAhead = challengeData.bets.length > 0 && challengeData.currentBalance > 0
-                ? Math.log(challengeData.currentBalance / currentTarget) / Math.log(DAILY_MULTIPLIER)
-                : 0;
-            document.getElementById('qAhead').textContent = daysAhead >= 0 ? `+${daysAhead.toFixed(1)}` : daysAhead.toFixed(1);
-            document.getElementById('qAhead').className = `quick-stat-value ${daysAhead >= 0 ? 'green' : 'red'}`;
-            
-            const avgOdds = challengeData.bets.length > 0
-                ? challengeData.bets.reduce((a, b) => a + b.odds, 0) / challengeData.bets.length
-                : DAILY_MULTIPLIER;
-            document.getElementById('qAvgOdds').textContent = avgOdds.toFixed(2);
-            
-            document.getElementById('qLeft').textContent = Math.max(0, TARGET_DAYS - challengeData.bets.length);
-            
-            const roi = ((challengeData.currentBalance - INITIAL_BALANCE) / INITIAL_BALANCE * 100);
-            document.getElementById('qROI').textContent = `${roi.toFixed(0)}%`;
-        }
-
-        function updateProgress() {
-            const progress = (challengeData.currentBalance / FINAL_TARGET) * 100;
-            const progressFill = document.getElementById('progressFill');
-            progressFill.style.width = `${Math.max(progress, 2)}%`;
-            progressFill.textContent = `${progress.toFixed(1)}%`;
-            document.getElementById('progressPercent').textContent = `${progress.toFixed(1)}%`;
-
-            // Streak display
-            let streakHtml = '';
-            for (let i = 1; i <= TARGET_DAYS; i++) {
-                const bet = challengeData.bets.find(b => b.day === i);
-                let dayClass = 'streak-day streak-pending';
-                
-                if (bet) {
-                    if (bet.status === 'won') dayClass = 'streak-day streak-won';
-                    else if (bet.status === 'lost') dayClass = 'streak-day streak-lost';
-                    else if (bet.status === 'void') dayClass = 'streak-day streak-void';
-                }
-                
-                if (i === challengeData.bets.length + 1) dayClass += ' streak-current';
-                
-                streakHtml += `<div class="${dayClass}">${i}</div>`;
-            }
-            document.getElementById('streakDisplay').innerHTML = streakHtml;
-
-            // Metrics
-            document.getElementById('mWins').textContent = challengeData.bets.filter(b => b.status === 'won').length;
-            document.getElementById('mLosses').textContent = challengeData.bets.filter(b => b.status === 'lost').length;
-            
-            const wonBets = challengeData.bets.filter(b => b.status === 'won');
-            if (wonBets.length > 0) {
-                const bestBet = wonBets.reduce((a, b) => (b.returns - b.stake) > (a.returns - a.stake) ? b : a);
-                document.getElementById('mBestDay').textContent = `Day ${bestBet.day}`;
-            } else {
-                document.getElementById('mBestDay').textContent = '-';
-            }
-            
-            let streak = 0;
-            for (let i = challengeData.bets.length - 1; i >= 0; i--) {
-                if (challengeData.bets[i].status === 'won') streak++;
-                else break;
-            }
-            document.getElementById('mStreak').textContent = streak;
-        }
-
-        function updateMilestones() {
-            const container = document.getElementById('milestonesList');
-            
-            container.innerHTML = MILESTONES.map(m => {
-                const reached = challengeData.currentBalance >= m.amount;
-                return `
-                    <div class="milestone-item ${reached ? 'reached' : ''}">
-                        <div class="milestone-check ${reached ? 'reached' : 'pending'}">
-                            ${reached ? '✓' : m.emoji}
-                        </div>
-                        <div class="milestone-info">
-                            <div class="milestone-amount">${formatCurrency(m.amount)}</div>
-                            <div class="milestone-label">${m.label}</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function updateProbability() {
-            const betsLeft = TARGET_DAYS - challengeData.bets.length;
-            document.getElementById('betsRemaining').textContent = betsLeft;
-            
-            // Required win rate to complete (simplified calculation)
-            const requiredWinRate = 100; // Need to win all remaining
-            document.getElementById('requiredWinRate').textContent = `${requiredWinRate}%`;
-            
-            // Implied probability at 1.20 odds
-            const impliedProb = (1 / DAILY_MULTIPLIER * 100).toFixed(1);
-            document.getElementById('impliedProb').textContent = `${impliedProb}%`;
-            
-            // Success probability (rough estimate)
-            const currentWinRate = challengeData.bets.length > 0 
-                ? challengeData.bets.filter(b => b.status === 'won').length / challengeData.bets.length 
-                : 0.833;
-            const successProb = Math.pow(currentWinRate, betsLeft) * 100;
-            document.getElementById('successProb').textContent = `${successProb.toFixed(1)}%`;
-            
-            // Kelly Criterion (simplified)
-            const edge = currentWinRate - (1 / DAILY_MULTIPLIER);
-            const kelly = edge > 0 ? (edge / (DAILY_MULTIPLIER - 1)) * 100 : 0;
-            document.getElementById('kellyStake').textContent = kelly > 0 ? `${kelly.toFixed(0)}%` : 'N/A';
-            
-            // Risk indicator
-            const riskLevel = Math.min(100, Math.max(0, 100 - successProb));
-            document.getElementById('riskIndicator').style.left = `${riskLevel}%`;
-        }
-
-        function updateAnalytics() {
-            const roi = ((challengeData.currentBalance - INITIAL_BALANCE) / INITIAL_BALANCE * 100);
-            document.getElementById('analyticsROI').textContent = `${roi.toFixed(1)}%`;
-            document.getElementById('analyticsROI').className = `analytics-value ${roi >= 0 ? 'green' : 'red'}`;
-            
-            if (challengeData.bets.length > 0) {
-                const avgStake = challengeData.bets.reduce((a, b) => a + b.stake, 0) / challengeData.bets.length;
-                document.getElementById('analyticsAvgStake').textContent = formatCurrency(avgStake);
-                
-                // Best market analysis
-                const marketWins = {};
-                challengeData.bets.forEach(b => {
-                    b.legs?.forEach(l => {
-                        if (!marketWins[l.market]) marketWins[l.market] = { wins: 0, total: 0 };
-                        marketWins[l.market].total++;
-                        if (b.status === 'won') marketWins[l.market].wins++;
-                    });
-                });
-                
-                let bestMarket = '-';
-                let bestRate = 0;
-                Object.entries(marketWins).forEach(([market, data]) => {
-                    const rate = data.wins / data.total;
-                    if (rate > bestRate && data.total >= 1) {
-                        bestRate = rate;
-                        bestMarket = MARKET_TYPES[market] || market;
-                    }
-                });
-                document.getElementById('analyticsBestMarket').textContent = bestMarket.length > 12 ? bestMarket.substring(0, 12) + '...' : bestMarket;
-                
-                // Best competition
-                const compWins = {};
-                challengeData.bets.forEach(b => {
-                    if (!compWins[b.competition]) compWins[b.competition] = { wins: 0, total: 0 };
-                    compWins[b.competition].total++;
-                    if (b.status === 'won') compWins[b.competition].wins++;
-                });
-                
-                let bestComp = '-';
-                let bestCompRate = 0;
-                Object.entries(compWins).forEach(([comp, data]) => {
-                    const rate = data.wins / data.total;
-                    if (rate > bestCompRate && data.total >= 1) {
-                        bestCompRate = rate;
-                        bestComp = comp;
-                    }
-                });
-                document.getElementById('analyticsBestComp').textContent = bestComp.length > 12 ? bestComp.substring(0, 12) + '...' : bestComp;
-                
-                // High confidence accuracy
-                const highConfBets = challengeData.bets.filter(b => b.confidence === 'high');
-                const highConfWins = highConfBets.filter(b => b.status === 'won').length;
-                const highConfRate = highConfBets.length > 0 ? (highConfWins / highConfBets.length * 100) : 0;
-                document.getElementById('analyticsHighConf').textContent = `${highConfRate.toFixed(0)}%`;
-                
-                // Optimal odds range
-                const oddsBuckets = { '1.10-1.30': 0, '1.30-1.50': 0, '1.50-2.00': 0, '2.00+': 0 };
-                challengeData.bets.filter(b => b.status === 'won').forEach(b => {
-                    if (b.odds < 1.30) oddsBuckets['1.10-1.30']++;
-                    else if (b.odds < 1.50) oddsBuckets['1.30-1.50']++;
-                    else if (b.odds < 2.00) oddsBuckets['1.50-2.00']++;
-                    else oddsBuckets['2.00+']++;
-                });
-                
-                let bestOddsRange = '1.20-1.50';
-                let maxWins = 0;
-                Object.entries(oddsBuckets).forEach(([range, wins]) => {
-                    if (wins > maxWins) {
-                        maxWins = wins;
-                        bestOddsRange = range;
-                    }
-                });
-                document.getElementById('analyticsOptOdds').textContent = bestOddsRange;
-            } else {
-                document.getElementById('analyticsAvgStake').textContent = '-';
-                document.getElementById('analyticsBestMarket').textContent = '-';
-                document.getElementById('analyticsBestComp').textContent = '-';
-                document.getElementById('analyticsHighConf').textContent = '-';
-                document.getElementById('analyticsOptOdds').textContent = '-';
-            }
-
-            // Day performance bars
-            const container = document.getElementById('dayPerformance');
-            if (challengeData.bets.length > 0) {
-                const maxProfit = Math.max(...challengeData.bets.map(b => b.returns - b.stake));
-                const minProfit = Math.min(...challengeData.bets.map(b => b.returns - b.stake));
-                const range = Math.max(Math.abs(maxProfit), Math.abs(minProfit)) || 1;
-                
-                container.innerHTML = challengeData.bets.slice(-10).map(b => {
-                    const profit = b.returns - b.stake;
-                    const height = Math.abs(profit) / range * 50;
-                    const color = profit >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-                    
-                    return `
-                        <div class="day-bar-container">
-                            <div class="day-bar" style="height: 60px;">
-                                <div class="day-bar-fill" style="height: ${height}px; background: ${color}; bottom: ${profit < 0 ? 'auto' : '0'}; top: ${profit < 0 ? '50%' : 'auto'};"></div>
-                            </div>
-                            <div class="day-bar-label">D${b.day}</div>
-                        </div>
-                    `;
-                }).join('');
-            } else {
-                container.innerHTML = '<div class="text-muted text-center" style="width:100%;">No data yet</div>';
-            }
-        }
-
-        function updatePendingBets() {
-            const container = document.getElementById('pendingBetsContainer');
-            
-            if (challengeData.pendingBets.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>No pending bets</p></div>';
-                return;
-            }
-            
-            container.innerHTML = challengeData.pendingBets.map(b => {
-                const legsHtml = b.legs?.map(l => `
-                    <div class="pending-leg">
-                        <strong>${l.selection}</strong> @ <span class="green">${l.odds.toFixed(2)}</span>
-                        <br><span class="text-muted" style="font-size:0.65rem;">${l.match}</span>
-                    </div>
-                `).join('') || `<div class="pending-leg">${b.selection}</div>`;
-                
-                return `
-                    <div class="pending-bet">
-                        <div class="pending-header">
-                            <span class="badge badge-pending">${b.type}</span>
-                            <span class="text-muted" style="font-size:0.7rem;">${b.date}</span>
-                        </div>
-                        <div class="pending-legs">${legsHtml}</div>
-                        <div class="pending-summary">
-                            <span>@ <strong class="green">${b.odds.toFixed(2)}</strong></span>
-                            <span>${formatCurrency(b.stake)} → <strong class="green">${formatCurrency(b.stake * b.odds)}</strong></span>
-                        </div>
-                        <div class="btn-group">
-                            <button class="btn btn-sm btn-success" onclick="openResultModal(${b.id})">✅ Result</button>
-                            <button class="btn btn-sm btn-secondary" onclick="cancelPendingBet(${b.id})">❌ Cancel</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function updateHistory() {
-            const tbody = document.getElementById('historyTableBody');
-            
-            if (challengeData.bets.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted" style="padding:25px;">No bets recorded yet</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = challengeData.bets.map(b => {
-                const vsTargetClass = b.vsTarget >= 0 ? 'green' : 'red';
-                const vsTargetSign = b.vsTarget >= 0 ? '+' : '';
-                
-                return `
-                    <tr>
-                        <td><strong>${b.day}</strong></td>
-                        <td>${b.date}</td>
-                        <td title="${b.selection}">${b.selection.length > 25 ? b.selection.substring(0, 25) + '...' : b.selection}</td>
-                        <td>${b.type}</td>
-                        <td><strong>${b.odds.toFixed(2)}</strong></td>
-                        <td>${formatCurrency(b.stake)}</td>
-                        <td><span class="badge badge-${b.status}">${b.status === 'won' ? '✅ Won' : b.status === 'void' ? '⚪ Void' : '❌ Lost'}</span></td>
-                        <td class="${b.returns > b.stake ? 'green' : 'red'}">${formatCurrency(b.returns)}</td>
-                        <td><strong>${formatCurrency(b.balanceAfter)}</strong></td>
-                        <td class="${vsTargetClass}">${vsTargetSign}${formatCurrency(b.vsTarget)}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function updateChart() {
-            const ctx = document.getElementById('balanceChart');
-            if (!ctx) return;
-            
-            if (window.balanceChartInstance) {
-                window.balanceChartInstance.destroy();
-            }
-
-            const actualData = [{ x: 0, y: INITIAL_BALANCE }];
-            challengeData.bets.forEach(b => {
-                actualData.push({ x: b.day, y: b.balanceAfter });
-            });
-
-            const targetData = [];
-            for (let i = 0; i <= TARGET_DAYS; i++) {
-                targetData.push({ x: i, y: INITIAL_BALANCE * Math.pow(DAILY_MULTIPLIER, i) });
-            }
-
-            window.balanceChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    datasets: [
-                        {
-                            label: 'Your Balance',
-                            data: actualData,
-                            borderColor: '#00d4aa',
-                            backgroundColor: 'rgba(0, 212, 170, 0.1)',
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 5,
-                            pointBackgroundColor: '#00d4aa',
-                            borderWidth: 3
-                        },
-                        {
-                            label: 'Target',
-                            data: targetData,
-                            borderColor: '#54a0ff',
-                            borderDash: [6, 4],
-                            fill: false,
-                            tension: 0.4,
-                            pointRadius: 0,
-                            borderWidth: 2
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#b0b0c0',
-                                font: { size: 11 }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: '#1a1a2e',
-                            titleColor: '#fff',
-                            bodyColor: '#b0b0c0',
-                            borderColor: '#333355',
-                            borderWidth: 1,
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.dataset.label}: £${context.parsed.y.toFixed(0)}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            min: 0,
-                            max: TARGET_DAYS,
-                            ticks: {
-                                color: '#b0b0c0',
-                                font: { size: 10 },
-                                stepSize: 3
-                            },
-                            grid: { color: '#2d2d4a' },
-                            title: {
-                                display: true,
-                                text: 'Day',
-                                color: '#6c6c8a',
-                                font: { size: 10 }
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                color: '#b0b0c0',
-                                font: { size: 10 },
-                                callback: v => v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v
-                            },
-                            grid: { color: '#2d2d4a' },
-                            min: 0,
-                            title: {
-                                display: true,
-                                text: 'Balance (£)',
-                                color: '#6c6c8a',
-                                font: { size: 10 }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // ============================================================
-        // INITIALIZATION
-        // ============================================================
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            log('🎯 21-Day Betting Challenge starting...');
-            
-            // Load saved data
-            loadData();
-            
-            // Initialize Firebase
-            initFirebase();
-            
-            // Load fixtures
-            loadFixtures();
-            
-            // Initial UI update
-            updateAllUI();
-            
-            log(`✅ App initialized. Day ${challengeData.bets.length + 1} | Balance: ${formatCurrency(challengeData.currentBalance)}`);
-        });
-    </script>
-</body>
-</html>
