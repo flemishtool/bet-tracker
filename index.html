@@ -7,6 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Bet Tracker">
     <meta name="theme-color" content="#0f0f1a">
+    <link rel="manifest" href="manifest.json">
     <title>21-Day Betting Challenge</title>
     
     <!-- Firebase SDK -->
@@ -17,7 +18,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
         :root {
             --bg-primary: #0f0f1a;
@@ -35,87 +40,138 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
-            padding: 12px;
-            padding-bottom: 80px;
+            padding: 10px;
+            padding-bottom: 100px;
             line-height: 1.4;
         }
 
-        /* Header */
-        .dashboard-header {
+        /* ==================== HEADER ==================== */
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 12px;
+            padding: 12px 0;
             border-bottom: 2px solid var(--border-color);
+            margin-bottom: 12px;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .dashboard-header h1 {
-            font-size: 1.3rem;
+        .header h1 {
+            font-size: 1.2rem;
             background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .header-stats { display: flex; gap: 12px; flex-wrap: wrap; }
-        .header-stat { text-align: center; min-width: 60px; }
-        .header-stat-value { font-size: 1rem; font-weight: bold; color: var(--accent-green); }
-        .header-stat-label { font-size: 0.6rem; color: var(--text-secondary); text-transform: uppercase; }
-
-        .sync-status {
+        .header-right {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.7rem;
-            color: var(--text-secondary);
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .sync-badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
             padding: 4px 10px;
             background: var(--bg-tertiary);
             border-radius: 15px;
+            font-size: 0.65rem;
         }
-        .sync-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
         .sync-dot.synced { background: var(--accent-green); }
         .sync-dot.syncing { background: var(--accent-orange); animation: pulse 1s infinite; }
         .sync-dot.offline { background: var(--accent-red); }
 
-        /* Quick Stats */
+        .header-stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-stat {
+            text-align: center;
+        }
+
+        .header-stat-value {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+
+        .header-stat-label {
+            font-size: 0.55rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        /* ==================== QUICK STATS ==================== */
         .quick-stats {
             display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
+            gap: 6px;
+            margin-bottom: 12px;
             overflow-x: auto;
-            padding-bottom: 8px;
+            padding-bottom: 6px;
             -webkit-overflow-scrolling: touch;
+        }
+
+        .quick-stats::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .quick-stats::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+        }
+
+        .quick-stats::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
         }
 
         .quick-stat {
             background: var(--bg-secondary);
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-radius: 8px;
             text-align: center;
-            min-width: 85px;
+            min-width: 75px;
             flex-shrink: 0;
             border: 1px solid var(--border-color);
         }
 
-        .quick-stat-value { font-size: 1rem; font-weight: bold; }
-        .quick-stat-label { font-size: 0.55rem; color: var(--text-secondary); margin-top: 2px; text-transform: uppercase; }
-
-        /* Grid */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 12px;
-            margin-bottom: 12px;
+        .quick-stat-value {
+            font-size: 0.95rem;
+            font-weight: bold;
         }
 
-        /* Cards */
+        .quick-stat-label {
+            font-size: 0.5rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* ==================== GRID ==================== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 10px;
+        }
+
+        /* ==================== CARDS ==================== */
         .card {
             background: var(--bg-secondary);
             border-radius: 10px;
@@ -132,63 +188,30 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .card-title { font-size: 0.9rem; font-weight: 600; }
-        .card-actions { display: flex; gap: 6px; align-items: center; }
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
 
-        /* Filters */
-        .filter-bar {
+        .card-actions {
             display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 12px;
-            padding: 10px;
-            background: var(--bg-tertiary);
-            border-radius: 8px;
+            gap: 6px;
+            align-items: center;
         }
 
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .filter-label {
-            font-size: 0.6rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-        }
-
-        .filter-select, .filter-input {
-            padding: 6px 10px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-primary);
-            font-size: 0.75rem;
-            min-width: 100px;
-        }
-
-        .filter-select:focus, .filter-input:focus {
-            outline: none;
-            border-color: var(--accent-green);
-        }
-
-        /* League Tabs - Scrollable */
-        .tabs-container {
-            position: relative;
-            margin-bottom: 10px;
-        }
-
+        /* ==================== TABS ==================== */
         .tabs {
             display: flex;
             gap: 4px;
             overflow-x: auto;
-            padding-bottom: 6px;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
             -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
         }
 
-        .tabs::-webkit-scrollbar { display: none; }
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
 
         .tab {
             padding: 5px 10px;
@@ -197,60 +220,71 @@
             border-radius: 5px;
             color: var(--text-secondary);
             cursor: pointer;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             white-space: nowrap;
             flex-shrink: 0;
             transition: all 0.2s;
         }
 
-        .tab:hover { background: var(--border-color); }
-        .tab.active { background: var(--accent-green); color: var(--bg-primary); }
+        .tab:hover {
+            background: var(--border-color);
+        }
 
-        /* Match Cards */
-        .fixtures-container {
-            max-height: 500px;
+        .tab.active {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+        }
+
+        /* ==================== FIXTURES ==================== */
+        .fixtures-list {
+            max-height: 480px;
             overflow-y: auto;
         }
 
-        .match-card {
+        .match {
             background: var(--bg-tertiary);
             border-radius: 8px;
             padding: 10px;
             margin-bottom: 8px;
+            cursor: pointer;
             border: 2px solid transparent;
             transition: all 0.2s;
-            cursor: pointer;
         }
 
-        .match-card:hover { border-color: var(--accent-blue); }
-        .match-card.selected { border-color: var(--accent-green); background: rgba(0, 212, 170, 0.1); }
-        .match-card.in-betslip { border-color: var(--accent-orange); }
+        .match:hover {
+            border-color: var(--accent-blue);
+        }
 
-        .match-header {
+        .match.in-slip {
+            border-color: var(--accent-orange);
+            background: rgba(255, 159, 67, 0.1);
+        }
+
+        .match-top {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 6px;
+            font-size: 0.55rem;
         }
 
         .match-league {
-            font-size: 0.55rem;
             color: var(--accent-blue);
-            text-transform: uppercase;
             font-weight: 600;
+            text-transform: uppercase;
         }
 
-        .match-time { font-size: 0.65rem; color: var(--text-secondary); }
+        .match-time {
+            color: var(--text-secondary);
+        }
 
         .match-teams {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 8px;
-            gap: 8px;
         }
 
-        .team-info {
+        .team {
             display: flex;
             align-items: center;
             gap: 6px;
@@ -258,97 +292,116 @@
             min-width: 0;
         }
 
-        .team-info.away { flex-direction: row-reverse; text-align: right; }
+        .team.away {
+            flex-direction: row-reverse;
+            text-align: right;
+        }
 
         .team-logo {
             width: 22px;
             height: 22px;
             border-radius: 4px;
             object-fit: contain;
-            background: var(--bg-secondary);
             flex-shrink: 0;
         }
 
         .team-name {
-            font-weight: 600;
             font-size: 0.75rem;
+            font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .match-score {
-            font-size: 1rem;
-            font-weight: bold;
-            padding: 0 8px;
+        .match-vs {
+            font-size: 0.75rem;
+            padding: 0 10px;
+            color: var(--text-secondary);
             flex-shrink: 0;
         }
 
-        /* Odds Buttons */
+        /* ==================== ODDS ==================== */
         .odds-row {
             display: flex;
             gap: 4px;
             flex-wrap: wrap;
         }
 
-        .odd-btn {
+        .odd {
             flex: 1;
-            min-width: 55px;
-            padding: 6px 4px;
+            min-width: 48px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 5px;
+            padding: 5px 3px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .odd-btn:hover { border-color: var(--accent-green); background: rgba(0, 212, 170, 0.1); }
-        .odd-btn.selected { background: var(--accent-green); color: var(--bg-primary); border-color: var(--accent-green); }
-        .odd-btn.in-betslip { background: var(--accent-orange); color: var(--bg-primary); border-color: var(--accent-orange); }
-
-        .odd-label { font-size: 0.5rem; color: var(--text-secondary); margin-bottom: 2px; }
-        .odd-btn.selected .odd-label, .odd-btn.in-betslip .odd-label { color: var(--bg-primary); }
-        .odd-value { font-weight: bold; font-size: 0.8rem; }
-        .odd-value.loading { color: var(--text-secondary); }
-
-        /* Betslip */
-        .betslip {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--bg-secondary);
-            border-top: 2px solid var(--accent-green);
-            padding: 12px;
-            z-index: 100;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-            max-height: 60vh;
-            overflow-y: auto;
+        .odd:hover {
+            border-color: var(--accent-green);
+            background: rgba(0, 212, 170, 0.1);
         }
 
-        .betslip.open { transform: translateY(0); }
+        .odd.selected {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            border-color: var(--accent-green);
+        }
 
-        .betslip-toggle {
+        .odd-label {
+            font-size: 0.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 1px;
+        }
+
+        .odd.selected .odd-label {
+            color: var(--bg-primary);
+        }
+
+        .odd-value {
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .odd-value.loading {
+            color: var(--text-secondary);
+        }
+
+        .load-odds-btn {
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        .bookmaker-info {
+            font-size: 0.5rem;
+            color: var(--text-secondary);
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        /* ==================== BETSLIP ==================== */
+        .betslip-btn {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 15px;
+            right: 15px;
             background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
             color: white;
             border: none;
-            border-radius: 50px;
+            border-radius: 25px;
             padding: 12px 20px;
             font-weight: bold;
             cursor: pointer;
-            z-index: 101;
-            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.4);
+            z-index: 100;
             display: flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.4);
+            font-size: 0.85rem;
         }
 
-        .betslip-toggle .count {
+        .betslip-count {
             background: white;
             color: var(--bg-primary);
             border-radius: 50%;
@@ -360,76 +413,126 @@
             font-size: 0.75rem;
         }
 
-        .betslip-header {
+        .betslip-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 2px solid var(--accent-green);
+            padding: 12px;
+            z-index: 99;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .betslip-panel.open {
+            transform: translateY(0);
+        }
+
+        .slip-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
             border-bottom: 1px solid var(--border-color);
         }
 
-        .betslip-title { font-weight: 600; font-size: 0.95rem; }
-        .betslip-clear { color: var(--accent-red); cursor: pointer; font-size: 0.75rem; }
+        .slip-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
 
-        .betslip-leg {
+        .slip-clear {
+            color: var(--accent-red);
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .slip-leg {
             background: var(--bg-tertiary);
             border-radius: 6px;
             padding: 8px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             position: relative;
         }
 
-        .betslip-leg-remove {
+        .slip-leg-remove {
             position: absolute;
             top: 5px;
             right: 5px;
             background: var(--accent-red);
-            color: white;
             border: none;
             border-radius: 50%;
             width: 18px;
             height: 18px;
-            font-size: 0.7rem;
+            color: white;
             cursor: pointer;
+            font-size: 0.65rem;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .betslip-leg-match { font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 3px; }
-        .betslip-leg-selection { font-weight: 600; font-size: 0.8rem; margin-bottom: 2px; }
-        .betslip-leg-odds { color: var(--accent-green); font-size: 0.75rem; }
-
-        .betslip-summary {
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 12px;
+        .slip-leg-match {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
         }
 
-        .betslip-row {
+        .slip-leg-sel {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .slip-leg-odds {
+            font-size: 0.75rem;
+            color: var(--accent-green);
+        }
+
+        .slip-summary {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .slip-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-size: 0.8rem;
         }
 
-        .betslip-row.total { font-weight: bold; font-size: 0.9rem; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-color); }
+        .slip-row.total {
+            font-weight: bold;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+        }
 
-        .betslip-input {
+        .slip-input {
             width: 100px;
-            padding: 8px;
+            padding: 6px 8px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 5px;
             color: var(--text-primary);
             text-align: right;
             font-size: 0.85rem;
         }
 
-        .betslip-submit {
+        .slip-input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        .slip-submit {
             width: 100%;
             padding: 12px;
             background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
@@ -439,74 +542,15 @@
             font-weight: bold;
             font-size: 0.9rem;
             cursor: pointer;
-            margin-top: 12px;
+            margin-top: 10px;
         }
 
-        .betslip-submit:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* Form Elements */
-        .form-group { margin-bottom: 10px; }
-        .form-label { display: block; margin-bottom: 4px; font-size: 0.75rem; color: var(--text-secondary); }
-
-        .form-input, .form-select {
-            width: 100%;
-            padding: 8px 10px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-primary);
-            font-size: 0.85rem;
+        .slip-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: var(--accent-green);
-        }
-
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-
-        /* Buttons */
-        .btn {
-            padding: 8px 14px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-primary { background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)); color: white; }
-        .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
-        .btn-success { background: var(--accent-green); color: var(--bg-primary); }
-        .btn-danger { background: var(--accent-red); color: white; }
-        .btn-warning { background: var(--accent-orange); color: var(--bg-primary); }
-        .btn-sm { padding: 4px 8px; font-size: 0.7rem; }
-
-        .btn-group { display: flex; gap: 6px; margin-top: 10px; }
-        .btn-group .btn { flex: 1; }
-
-        /* Tables */
-        .table-container { overflow-x: auto; max-height: 300px; overflow-y: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 6px 5px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 0.7rem; }
-        th { background: var(--bg-tertiary); font-weight: 600; font-size: 0.6rem; text-transform: uppercase; color: var(--text-secondary); position: sticky; top: 0; z-index: 5; }
-
-        /* Status Badges */
-        .badge {
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-size: 0.55rem;
-            font-weight: 600;
-        }
-
-        .badge-won { background: rgba(0, 212, 170, 0.2); color: var(--accent-green); }
-        .badge-lost { background: rgba(255, 107, 107, 0.2); color: var(--accent-red); }
-        .badge-pending { background: rgba(255, 159, 67, 0.2); color: var(--accent-orange); }
-        .badge-void { background: rgba(176, 176, 192, 0.2); color: var(--text-secondary); }
-        .badge-live { background: rgba(255, 107, 107, 0.3); color: var(--accent-red); animation: pulse 1.5s infinite; }
-
-        /* Progress */
+        /* ==================== PROGRESS ==================== */
         .progress-bar {
             height: 20px;
             background: var(--bg-tertiary);
@@ -522,14 +566,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: bold;
             min-width: 35px;
             transition: width 0.5s ease;
         }
 
-        /* Streak Display */
-        .streak-display { display: flex; gap: 3px; flex-wrap: wrap; margin: 10px 0; }
+        /* ==================== STREAK ==================== */
+        .streak {
+            display: flex;
+            gap: 3px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
 
         .streak-day {
             width: 22px;
@@ -542,35 +591,147 @@
             font-weight: bold;
         }
 
-        .streak-won { background: var(--accent-green); color: var(--bg-primary); }
-        .streak-lost { background: var(--accent-red); color: white; }
-        .streak-void { background: var(--text-secondary); color: var(--bg-primary); }
-        .streak-pending { background: var(--bg-tertiary); color: var(--text-secondary); border: 1px dashed var(--border-color); }
-        .streak-current { border: 2px solid white !important; }
+        .streak-won {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+        }
 
-        /* Metrics Grid */
-        .metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .streak-lost {
+            background: var(--accent-red);
+            color: white;
+        }
 
-        .metric-box {
+        .streak-void {
+            background: var(--text-secondary);
+            color: var(--bg-primary);
+        }
+
+        .streak-pending {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px dashed var(--border-color);
+        }
+
+        .streak-current {
+            border: 2px solid white !important;
+        }
+
+        /* ==================== METRICS ==================== */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .metric {
             background: var(--bg-tertiary);
             padding: 10px;
             border-radius: 6px;
             text-align: center;
         }
 
-        .metric-value { font-size: 1.1rem; font-weight: bold; }
-        .metric-label { font-size: 0.55rem; color: var(--text-secondary); text-transform: uppercase; }
+        .metric-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
 
-        /* Colors */
-        .green { color: var(--accent-green); }
-        .red { color: var(--accent-red); }
-        .orange { color: var(--accent-orange); }
-        .blue { color: var(--accent-blue); }
-        .purple { color: var(--accent-purple); }
-        .yellow { color: var(--accent-yellow); }
+        .metric-label {
+            font-size: 0.5rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
 
-        /* Modal */
-        .modal-overlay {
+        /* ==================== PENDING BETS ==================== */
+        .pending-bet {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .pending-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .pending-legs {
+            margin-bottom: 8px;
+        }
+
+        .pending-leg {
+            font-size: 0.7rem;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .pending-leg:last-child {
+            border-bottom: none;
+        }
+
+        .pending-summary {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-top: 6px;
+        }
+
+        /* ==================== BUTTONS ==================== */
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-success {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+        }
+
+        .btn-danger {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--accent-orange);
+            color: var(--bg-primary);
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.65rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+        }
+
+        /* ==================== MODAL ==================== */
+        .modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -580,13 +741,15 @@
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 200;
             padding: 15px;
         }
 
-        .modal-overlay.active { display: flex; }
+        .modal.open {
+            display: flex;
+        }
 
-        .modal {
+        .modal-box {
             background: var(--bg-secondary);
             border-radius: 10px;
             padding: 16px;
@@ -603,158 +766,315 @@
             margin-bottom: 12px;
         }
 
+        .modal-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
         .modal-close {
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             cursor: pointer;
+            padding: 0;
+            line-height: 1;
         }
 
-        /* Loading & Empty States */
-        .loading { display: flex; justify-content: center; align-items: center; padding: 25px; }
+        /* ==================== FORMS ==================== */
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        /* ==================== TABLES ==================== */
+        .table-wrap {
+            overflow-x: auto;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 6px 5px;
+            text-align: left;
+            font-size: 0.65rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        /* ==================== BADGES ==================== */
+        .badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.55rem;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: rgba(255, 159, 67, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .badge-won {
+            background: rgba(0, 212, 170, 0.2);
+            color: var(--accent-green);
+        }
+
+        .badge-lost {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--accent-red);
+        }
+
+        .badge-void {
+            background: rgba(176, 176, 192, 0.2);
+            color: var(--text-secondary);
+        }
+
+        /* ==================== UTILITIES ==================== */
+        .green { color: var(--accent-green); }
+        .red { color: var(--accent-red); }
+        .orange { color: var(--accent-orange); }
+        .blue { color: var(--accent-blue); }
+        .purple { color: var(--accent-purple); }
+        .yellow { color: var(--accent-yellow); }
+
+        .empty {
+            text-align: center;
+            padding: 25px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
 
         .spinner {
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             border: 3px solid var(--bg-tertiary);
             border-top-color: var(--accent-green);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
-        .empty-state { text-align: center; padding: 20px; color: var(--text-secondary); font-size: 0.8rem; }
-        .empty-state-icon { font-size: 2rem; margin-bottom: 8px; }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
-        /* Notifications */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* ==================== CHART ==================== */
+        .chart-box {
+            height: 170px;
+            position: relative;
+        }
+
+        /* ==================== API STATUS ==================== */
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.6rem;
+        }
+
+        .api-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+
+        .api-dot.online { background: var(--accent-green); }
+        .api-dot.loading { background: var(--accent-orange); animation: pulse 1s infinite; }
+        .api-dot.offline { background: var(--accent-red); }
+
+        /* ==================== NOTIFICATIONS ==================== */
         .notification {
             position: fixed;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            padding: 10px 15px;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            padding: 12px 15px;
             border-radius: 8px;
             color: white;
             font-weight: 600;
-            z-index: 1001;
-            animation: slideDown 0.3s ease;
+            z-index: 300;
             font-size: 0.8rem;
             text-align: center;
+            animation: slideDown 0.3s ease;
         }
 
-        .notification-success { background: var(--accent-green); }
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-success { background: var(--accent-green); color: var(--bg-primary); }
         .notification-error { background: var(--accent-red); }
-        .notification-warning { background: var(--accent-orange); }
+        .notification-warning { background: var(--accent-orange); color: var(--bg-primary); }
         .notification-info { background: var(--accent-blue); }
 
-        /* Animations */
-        @keyframes slideDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        /* ==================== FULL WIDTH ==================== */
+        .full-width {
+            grid-column: 1 / -1;
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-        /* Chart */
-        .chart-container { position: relative; height: 180px; }
-
-        /* Full Width */
-        .full-width { grid-column: 1 / -1; }
-
-        /* Responsive */
+        /* ==================== RESPONSIVE ==================== */
         @media (max-width: 768px) {
-            body { padding: 8px; padding-bottom: 100px; }
-            .dashboard-header { flex-direction: column; text-align: center; }
-            .grid-container { grid-template-columns: 1fr; }
-            .form-row { grid-template-columns: 1fr; }
-            .betslip { max-height: 70vh; }
-            .filter-bar { flex-direction: column; }
-            .filter-group { width: 100%; }
-            .filter-select { width: 100%; }
+            body {
+                padding: 8px;
+                padding-bottom: 110px;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .betslip-panel {
+                max-height: 70vh;
+            }
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: var(--bg-tertiary); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent-green); }
+        /* ==================== SCROLLBAR ==================== */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
 
-        /* API Status */
-        .api-status { display: flex; align-items: center; gap: 5px; font-size: 0.65rem; }
-        .api-dot { width: 7px; height: 7px; border-radius: 50%; }
-        .api-dot.online { background: var(--accent-green); }
-        .api-dot.offline { background: var(--accent-red); }
-        .api-dot.loading { background: var(--accent-orange); animation: pulse 1s infinite; }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+        }
 
-        /* Cache Info */
-        .cache-info {
-            font-size: 0.6rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 4px;
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-green);
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="dashboard-header">
-        <h1>🎯 21-Day Challenge</h1>
-        <div class="sync-status" id="syncStatus">
-            <div class="sync-dot offline" id="syncDot"></div>
-            <span id="syncText">Local Only</span>
-        </div>
-        <div class="header-stats">
-            <div class="header-stat">
-                <div class="header-stat-value" id="currentDay">Day 1</div>
-                <div class="header-stat-label">Day</div>
+    <!-- ==================== HEADER ==================== -->
+    <div class="header">
+        <h1>🎯 21-Day Betting Challenge</h1>
+        <div class="header-right">
+            <div class="sync-badge">
+                <div class="sync-dot offline" id="syncDot"></div>
+                <span id="syncText">Connecting...</span>
             </div>
-            <div class="header-stat">
-                <div class="header-stat-value" id="currentBalance">£200</div>
-                <div class="header-stat-label">Balance</div>
-            </div>
-            <div class="header-stat">
-                <div class="header-stat-value green" id="winRate">0%</div>
-                <div class="header-stat-label">Win Rate</div>
-            </div>
-            <div class="header-stat">
-                <div class="header-stat-value" id="challengeStatus">🟢</div>
-                <div class="header-stat-label">Status</div>
+            <div class="header-stats">
+                <div class="header-stat">
+                    <div class="header-stat-value" id="hDay">Day 3</div>
+                    <div class="header-stat-label">Current Day</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value" id="hBalance">£384</div>
+                    <div class="header-stat-label">Balance</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value green" id="hWinRate">100%</div>
+                    <div class="header-stat-label">Win Rate</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value" id="hStatus">🟢</div>
+                    <div class="header-stat-label">Status</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Quick Stats -->
+    <!-- ==================== QUICK STATS ==================== -->
     <div class="quick-stats">
         <div class="quick-stat">
-            <div class="quick-stat-value green" id="totalProfit">£0</div>
+            <div class="quick-stat-value green" id="qProfit">£184</div>
             <div class="quick-stat-label">Profit</div>
         </div>
         <div class="quick-stat">
-            <div class="quick-stat-value blue" id="targetToday">£240</div>
+            <div class="quick-stat-value blue" id="qTarget">£346</div>
             <div class="quick-stat-label">Target</div>
         </div>
         <div class="quick-stat">
-            <div class="quick-stat-value orange" id="daysAhead">0</div>
+            <div class="quick-stat-value orange" id="qAhead">+0.5</div>
             <div class="quick-stat-label">Days +/-</div>
         </div>
         <div class="quick-stat">
-            <div class="quick-stat-value purple" id="avgOdds">1.20</div>
+            <div class="quick-stat-value purple" id="qAvgOdds">1.39</div>
             <div class="quick-stat-label">Avg Odds</div>
         </div>
         <div class="quick-stat">
-            <div class="quick-stat-value" id="remainingDays">21</div>
-            <div class="quick-stat-label">Left</div>
+            <div class="quick-stat-value" id="qLeft">19</div>
+            <div class="quick-stat-label">Days Left</div>
         </div>
         <div class="quick-stat">
-            <div class="quick-stat-value yellow" id="roiDisplay">0%</div>
+            <div class="quick-stat-value yellow" id="qROI">92%</div>
             <div class="quick-stat-label">ROI</div>
         </div>
     </div>
 
-    <!-- Main Grid -->
-    <div class="grid-container">
+    <!-- ==================== MAIN GRID ==================== -->
+    <div class="grid">
         <!-- Fixtures Card -->
         <div class="card">
             <div class="card-header">
@@ -762,54 +1082,13 @@
                 <div class="card-actions">
                     <div class="api-status">
                         <div class="api-dot loading" id="apiDot"></div>
-                        <span id="apiText">Loading</span>
+                        <span id="apiText">Loading...</span>
                     </div>
-                    <div class="cache-info" id="cacheInfo"></div>
-                    <button class="btn btn-sm btn-secondary" onclick="refreshFixtures(true)">🔄</button>
+                    <button class="btn btn-sm btn-secondary" onclick="loadFixtures(true)">🔄</button>
                 </div>
             </div>
-
-            <!-- Filters -->
-            <div class="filter-bar">
-                <div class="filter-group">
-                    <span class="filter-label">Date</span>
-                    <input type="date" class="filter-input" id="filterDate" onchange="applyFilters()">
-                </div>
-                <div class="filter-group">
-                    <span class="filter-label">Odds Min</span>
-                    <input type="number" class="filter-input" id="filterOddsMin" placeholder="1.01" step="0.01" min="1.01" style="width:70px" onchange="applyFilters()">
-                </div>
-                <div class="filter-group">
-                    <span class="filter-label">Odds Max</span>
-                    <input type="number" class="filter-input" id="filterOddsMax" placeholder="10.00" step="0.01" min="1.01" style="width:70px" onchange="applyFilters()">
-                </div>
-                <div class="filter-group">
-                    <span class="filter-label">Sort By</span>
-                    <select class="filter-select" id="filterSort" onchange="applyFilters()">
-                        <option value="time">Kickoff Time</option>
-                        <option value="odds-low">Odds: Low → High</option>
-                        <option value="odds-high">Odds: High → Low</option>
-                        <option value="league">League</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <span class="filter-label">Status</span>
-                    <select class="filter-select" id="filterStatus" onchange="applyFilters()">
-                        <option value="all">All</option>
-                        <option value="upcoming">Upcoming</option>
-                        <option value="live">Live</option>
-                        <option value="finished">Finished</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- League Tabs -->
-            <div class="tabs-container">
-                <div class="tabs" id="leagueTabs"></div>
-            </div>
-
-            <!-- Fixtures List -->
-            <div class="fixtures-container" id="fixturesContainer">
+            <div class="tabs" id="tabs"></div>
+            <div class="fixtures-list" id="fixtures">
                 <div class="loading"><div class="spinner"></div></div>
             </div>
         </div>
@@ -817,31 +1096,28 @@
         <!-- Progress Card -->
         <div class="card">
             <div class="card-header">
-                <span class="card-title">📈 Progress</span>
+                <span class="card-title">📈 Challenge Progress</span>
             </div>
-            
             <div class="progress-bar">
-                <div class="progress-fill" id="progressFill" style="width: 2.2%">2.2%</div>
+                <div class="progress-fill" id="progressFill" style="width: 4.2%">4.2%</div>
             </div>
-
-            <div class="streak-display" id="streakDisplay"></div>
-
-            <div class="metrics-grid">
-                <div class="metric-box">
-                    <div class="metric-value green" id="winCount">0</div>
+            <div class="streak" id="streak"></div>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value green" id="mWins">2</div>
                     <div class="metric-label">Wins</div>
                 </div>
-                <div class="metric-box">
-                    <div class="metric-value red" id="lossCount">0</div>
+                <div class="metric">
+                    <div class="metric-value red" id="mLosses">0</div>
                     <div class="metric-label">Losses</div>
                 </div>
-                <div class="metric-box">
-                    <div class="metric-value blue" id="bestDay">-</div>
+                <div class="metric">
+                    <div class="metric-value blue" id="mBest">Day 2</div>
                     <div class="metric-label">Best Day</div>
                 </div>
-                <div class="metric-box">
-                    <div class="metric-value orange" id="currentStreak">0</div>
-                    <div class="metric-label">Streak</div>
+                <div class="metric">
+                    <div class="metric-value orange" id="mStreak">2</div>
+                    <div class="metric-label">Win Streak</div>
                 </div>
             </div>
         </div>
@@ -851,9 +1127,9 @@
             <div class="card-header">
                 <span class="card-title">⏳ Pending Bets</span>
             </div>
-            <div id="pendingBets">
-                <div class="empty-state">
-                    <div class="empty-state-icon">📭</div>
+            <div id="pending">
+                <div class="empty">
+                    <div class="empty-icon">📭</div>
                     <p>No pending bets</p>
                 </div>
             </div>
@@ -864,23 +1140,23 @@
             <div class="card-header">
                 <span class="card-title">📊 Balance Chart</span>
             </div>
-            <div class="chart-container">
-                <canvas id="balanceChart"></canvas>
+            <div class="chart-box">
+                <canvas id="chart"></canvas>
             </div>
         </div>
 
         <!-- History Card -->
         <div class="card full-width">
             <div class="card-header">
-                <span class="card-title">📜 History</span>
+                <span class="card-title">📜 Bet History</span>
                 <div class="card-actions">
                     <button class="btn btn-sm btn-secondary" onclick="exportData()">📤 Export</button>
                     <button class="btn btn-sm btn-secondary" onclick="document.getElementById('importFile').click()">📥 Import</button>
                     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-                    <button class="btn btn-sm btn-danger" onclick="confirmReset()">🗑️</button>
+                    <button class="btn btn-sm btn-danger" onclick="resetData()">🗑️ Reset</button>
                 </div>
             </div>
-            <div class="table-container">
+            <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
@@ -895,191 +1171,284 @@
                             <th>Balance</th>
                         </tr>
                     </thead>
-                    <tbody id="historyTable"></tbody>
+                    <tbody id="history"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- Betslip Toggle Button -->
-    <button class="betslip-toggle" id="betslipToggle" onclick="toggleBetslip()">
-        🎫 Betslip
-        <span class="count" id="betslipCount">0</span>
+    <!-- ==================== BETSLIP TOGGLE ==================== -->
+    <button class="betslip-btn" onclick="toggleSlip()">
+        🎫 Betslip <span class="betslip-count" id="slipCount">0</span>
     </button>
 
-    <!-- Betslip Panel -->
-    <div class="betslip" id="betslip">
-        <div class="betslip-header">
-            <span class="betslip-title">🎫 Betslip</span>
-            <span class="betslip-clear" onclick="clearBetslip()">Clear All</span>
+    <!-- ==================== BETSLIP PANEL ==================== -->
+    <div class="betslip-panel" id="slipPanel">
+        <div class="slip-header">
+            <span class="slip-title">🎫 Betslip</span>
+            <span class="slip-clear" onclick="clearSlip()">Clear All</span>
         </div>
-        
-        <div id="betslipLegs"></div>
-        
-        <div class="betslip-summary">
-            <div class="betslip-row">
+        <div id="slipLegs">
+            <div class="empty">
+                <div class="empty-icon">📝</div>
+                <p>Click on odds to add selections</p>
+            </div>
+        </div>
+        <div class="slip-summary">
+            <div class="slip-row">
                 <span>Bet Type</span>
-                <span id="betslipType">Single</span>
+                <span id="slipType">-</span>
             </div>
-            <div class="betslip-row">
+            <div class="slip-row">
                 <span>Selections</span>
-                <span id="betslipSelections">0</span>
+                <span id="slipSelCount">0</span>
             </div>
-            <div class="betslip-row">
+            <div class="slip-row">
                 <span>Combined Odds</span>
-                <span class="green" id="betslipOdds">1.00</span>
+                <span class="green" id="slipOdds">1.00</span>
             </div>
-            <div class="betslip-row">
+            <div class="slip-row">
                 <span>Stake £</span>
-                <input type="number" class="betslip-input" id="betslipStake" step="0.01" min="0" oninput="updateBetslipReturns()">
+                <input type="number" class="slip-input" id="slipStake" step="0.01" min="0" oninput="updateSlipReturns()">
             </div>
-            <div class="betslip-row total">
+            <div class="slip-row total">
                 <span>Potential Returns</span>
-                <span class="green" id="betslipReturns">£0.00</span>
+                <span class="green" id="slipReturns">£0.00</span>
             </div>
         </div>
-        
-        <div class="form-group" style="margin-top:10px">
-            <label class="form-label">Notes (Optional)</label>
-            <input type="text" class="form-input" id="betslipNotes" placeholder="Why this bet?">
-        </div>
-        
-        <button class="betslip-submit" id="betslipSubmit" onclick="placeBet()" disabled>
-            📝 Place Bet
-        </button>
+        <button class="slip-submit" id="slipSubmit" onclick="placeBet()" disabled>📝 Place Bet</button>
     </div>
 
-    <!-- Result Modal -->
-    <div class="modal-overlay" id="resultModal">
-        <div class="modal">
+    <!-- ==================== RESULT MODAL ==================== -->
+    <div class="modal" id="resultModal">
+        <div class="modal-box">
             <div class="modal-header">
-                <h3 style="font-size:1rem">Record Result</h3>
-                <button class="modal-close" onclick="closeModal('resultModal')">&times;</button>
+                <span class="modal-title">Record Result</span>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
-            <div id="modalBetDetails"></div>
+            <div id="modalDetails"></div>
             <div class="form-group">
-                <label class="form-label">Final Score(s)</label>
-                <input type="text" class="form-input" id="finalScore" placeholder="e.g., 2-1, 3-0">
+                <label class="form-label">Final Score(s) - Optional</label>
+                <input type="text" class="form-input" id="finalScore" placeholder="e.g., 2-1 or 3-0, 2-1">
             </div>
             <div class="btn-group">
                 <button class="btn btn-success" onclick="recordResult('won')">✅ WON</button>
                 <button class="btn btn-danger" onclick="recordResult('lost')">❌ LOST</button>
             </div>
-            <button class="btn btn-secondary" onclick="recordResult('void')" style="width:100%;margin-top:8px">⚪ VOID</button>
+            <button class="btn btn-secondary" onclick="recordResult('void')" style="width:100%; margin-top:8px">⚪ VOID (Stake Returned)</button>
         </div>
     </div>
 
+    <!-- ==================== JAVASCRIPT ==================== -->
     <script>
-        // ==================== CONFIGURATION ====================
+        // ============================================================
+        // CONFIGURATION
+        // ============================================================
         
-        // Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyD-MH_oSRLM53UHe2sPB4bXRjsEcXEm9IM",
-  authDomain: "bet-tracker-d819b.firebaseapp.com",
-  databaseURL: "https://bet-tracker-d819b-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "bet-tracker-d819b",
-  storageBucket: "bet-tracker-d819b.firebasestorage.app",
-  messagingSenderId: "556598232550",
-  appId: "1:556598232550:web:2921e82966b16bf7520227"
-};
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-MH_oSRLM53UHe2sPB4bXRjsEcXEm9IM",
+            authDomain: "bet-tracker-d819b.firebaseapp.com",
+            databaseURL: "https://bet-tracker-d819b-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "bet-tracker-d819b",
+            storageBucket: "bet-tracker-d819b.firebasestorage.app",
+            messagingSenderId: "556598232550",
+            appId: "1:556598232550:web:2921e82966b16bf7520227"
+        };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-        
-        // API-Football Config
+        // API-Football Configuration
         const API_KEY = '89d2f65b7dc64f8d0fce8468e2a8af2b';
         const API_BASE = 'https://v3.football.api-sports.io';
-        
-        // Challenge Config
-        const INITIAL_BALANCE = 200;
-        const DAILY_MULTIPLIER = 1.20;
-        const TARGET_DAYS = 21;
-        const FINAL_TARGET = INITIAL_BALANCE * Math.pow(DAILY_MULTIPLIER, TARGET_DAYS);
-        
-        // Cache Config
-        const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
-        const ODDS_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes for odds
-        
-        // Leagues Configuration
+
+        // Challenge Configuration
+        const INITIAL = 200;
+        const MULT = 1.20;
+        const DAYS = 21;
+        const FINAL = INITIAL * Math.pow(MULT, DAYS);
+
+        // Cache Configuration
+        const FIXTURES_CACHE_TIME = 30 * 60 * 1000; // 30 minutes
+        const ODDS_CACHE_TIME = 10 * 60 * 1000; // 10 minutes
+
+        // Preferred Bookmakers (in order of preference)
+        const PREFERRED_BOOKMAKERS = ['Bet365', 'Pinnacle', '1xBet', 'Unibet', 'William Hill', 'Betfair', 'Bwin'];
+
+        // League Configuration
         const LEAGUES = {
-            // Top 5 Leagues
+            // England
             39: { name: 'Premier League', short: 'EPL', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 1 },
-            140: { name: 'La Liga', short: 'Liga', flag: '🇪🇸', priority: 2 },
-            78: { name: 'Bundesliga', short: 'Bund', flag: '🇩🇪', priority: 3 },
-            135: { name: 'Serie A', short: 'Serie', flag: '🇮🇹', priority: 4 },
-            61: { name: 'Ligue 1', short: 'L1', flag: '🇫🇷', priority: 5 },
-            
-            // Second Tier
             40: { name: 'Championship', short: 'Champ', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 6 },
-            141: { name: 'La Liga 2', short: 'Liga2', flag: '🇪🇸', priority: 7 },
-            79: { name: '2. Bundesliga', short: 'Bund2', flag: '🇩🇪', priority: 8 },
-            136: { name: 'Serie B', short: 'SerieB', flag: '🇮🇹', priority: 9 },
-            62: { name: 'Ligue 2', short: 'L2', flag: '🇫🇷', priority: 10 },
+            41: { name: 'League One', short: 'L1 ENG', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 25 },
+            42: { name: 'League Two', short: 'L2 ENG', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 26 },
+            45: { name: 'FA Cup', short: 'FA Cup', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 30 },
+            48: { name: 'EFL Cup', short: 'EFL Cup', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 31 },
             
-            // Other Top Leagues
+            // Spain
+            140: { name: 'La Liga', short: 'La Liga', flag: '🇪🇸', priority: 2 },
+            141: { name: 'La Liga 2', short: 'Liga 2', flag: '🇪🇸', priority: 7 },
+            143: { name: 'Copa del Rey', short: 'Copa', flag: '🇪🇸', priority: 32 },
+            
+            // Germany
+            78: { name: 'Bundesliga', short: 'Bund', flag: '🇩🇪', priority: 3 },
+            79: { name: '2. Bundesliga', short: 'Bund 2', flag: '🇩🇪', priority: 8 },
+            81: { name: 'DFB Pokal', short: 'DFB', flag: '🇩🇪', priority: 33 },
+            
+            // Italy
+            135: { name: 'Serie A', short: 'Serie A', flag: '🇮🇹', priority: 4 },
+            136: { name: 'Serie B', short: 'Serie B', flag: '🇮🇹', priority: 9 },
+            137: { name: 'Coppa Italia', short: 'Coppa IT', flag: '🇮🇹', priority: 34 },
+            
+            // France
+            61: { name: 'Ligue 1', short: 'Ligue 1', flag: '🇫🇷', priority: 5 },
+            62: { name: 'Ligue 2', short: 'Ligue 2', flag: '🇫🇷', priority: 10 },
+            66: { name: 'Coupe de France', short: 'CdF', flag: '🇫🇷', priority: 35 },
+            
+            // Portugal
             94: { name: 'Primeira Liga', short: 'PT Liga', flag: '🇵🇹', priority: 11 },
+            96: { name: 'Taça de Portugal', short: 'Taça', flag: '🇵🇹', priority: 36 },
+            
+            // Netherlands
             88: { name: 'Eredivisie', short: 'Ere', flag: '🇳🇱', priority: 12 },
+            90: { name: 'KNVB Beker', short: 'KNVB', flag: '🇳🇱', priority: 37 },
+            
+            // Belgium
             144: { name: 'Jupiler Pro', short: 'BEL', flag: '🇧🇪', priority: 13 },
+            
+            // Turkey
             203: { name: 'Süper Lig', short: 'TSL', flag: '🇹🇷', priority: 14 },
+            206: { name: 'Turkish Cup', short: 'TR Cup', flag: '🇹🇷', priority: 38 },
+            
+            // Scotland
             179: { name: 'Premiership', short: 'SPFL', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', priority: 15 },
+            183: { name: 'Scottish Cup', short: 'SC Cup', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿', priority: 39 },
+            
+            // Austria
             218: { name: 'Bundesliga AT', short: 'AUT', flag: '🇦🇹', priority: 16 },
+            
+            // Switzerland
             207: { name: 'Super League', short: 'SUI', flag: '🇨🇭', priority: 17 },
-            119: { name: 'Superliga', short: 'DEN', flag: '🇩🇰', priority: 18 },
-            197: { name: 'Super League', short: 'GRE', flag: '🇬🇷', priority: 19 },
-            307: { name: 'Saudi Pro', short: 'SPL', flag: '🇸🇦', priority: 20 },
             
-            // Cups
-            45: { name: 'FA Cup', short: 'FA', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 21, cup: true },
-            48: { name: 'EFL Cup', short: 'EFL', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', priority: 22, cup: true },
-            143: { name: 'Copa del Rey', short: 'Copa', flag: '🇪🇸', priority: 23, cup: true },
-            81: { name: 'DFB Pokal', short: 'DFB', flag: '🇩🇪', priority: 24, cup: true },
-            137: { name: 'Coppa Italia', short: 'CoppaIT', flag: '🇮🇹', priority: 25, cup: true },
-            66: { name: 'Coupe de France', short: 'CdF', flag: '🇫🇷', priority: 26, cup: true },
-            96: { name: 'Taça de Portugal', short: 'Taca', flag: '🇵🇹', priority: 27, cup: true },
+            // Greece
+            197: { name: 'Super League', short: 'GRE', flag: '🇬🇷', priority: 18 },
             
-            // European
-            2: { name: 'Champions League', short: 'UCL', flag: '🏆', priority: 28 },
-            3: { name: 'Europa League', short: 'UEL', flag: '🏆', priority: 29 },
-            848: { name: 'Conference League', short: 'UECL', flag: '🏆', priority: 30 },
+            // Denmark
+            119: { name: 'Superliga', short: 'DEN', flag: '🇩🇰', priority: 19 },
+            
+            // Russia
+            235: { name: 'Premier League', short: 'RUS', flag: '🇷🇺', priority: 20 },
+            
+            // Ukraine
+            333: { name: 'Premier League', short: 'UKR', flag: '🇺🇦', priority: 21 },
+            
+            // Saudi Arabia
+            307: { name: 'Saudi Pro League', short: 'SPL', flag: '🇸🇦', priority: 22 },
+            
+            // European Competitions
+            2: { name: 'Champions League', short: 'UCL', flag: '🏆', priority: 50 },
+            3: { name: 'Europa League', short: 'UEL', flag: '🏆', priority: 51 },
+            848: { name: 'Conference League', short: 'UECL', flag: '🏆', priority: 52 },
             
             // Friendlies
             667: { name: 'Club Friendlies', short: 'Friendly', flag: '⚽', priority: 100 }
         };
-        
-        const LEAGUE_IDS = Object.keys(LEAGUES).map(Number);
-        
-        // ==================== STATE ====================
+
+        // Leagues to fetch (ordered by priority)
+        const FETCH_LEAGUES = [39, 140, 78, 135, 61, 48, 45, 143, 81, 137, 2, 3, 848, 40, 94, 88, 144, 203, 179, 307, 667];
+
+        // ============================================================
+        // STATE
+        // ============================================================
         
         let db = null;
         let userId = null;
         let isOnline = false;
-        
-        let challengeData = {
-            startDate: null,
-            currentBalance: INITIAL_BALANCE,
-            bets: [],
+        let syncPending = false;
+
+        // Pre-loaded with Day 1 and Day 2 results
+        let data = {
+            startDate: "2025-12-15",
+            currentBalance: 384.42,
+            bets: [
+                {
+                    id: 1734291600001,
+                    date: "2025-12-15",
+                    type: "single",
+                    legs: [
+                        {
+                            match: "Fenerbahce vs Konyaspor",
+                            selection: "Fenerbahce Win",
+                            odds: 1.2857,
+                            league: "Turkish Super Lig",
+                            market: "home"
+                        }
+                    ],
+                    selection: "Fenerbahce Win",
+                    competition: "Turkish Super Lig",
+                    odds: 1.2857,
+                    stake: 200,
+                    status: "won",
+                    finalScore: "4-0",
+                    day: 1,
+                    returns: 257.14,
+                    balanceAfter: 257.14,
+                    targetForDay: 240,
+                    vsTarget: 17.14
+                },
+                {
+                    id: 1734378000002,
+                    date: "2025-12-16",
+                    type: "double",
+                    legs: [
+                        {
+                            match: "Cardiff City vs Chelsea",
+                            selection: "Chelsea Win",
+                            odds: 1.30,
+                            league: "EFL Cup",
+                            market: "away"
+                        },
+                        {
+                            match: "CD Guadalajara vs Barcelona",
+                            selection: "Barcelona Win & Over 1.5 Goals",
+                            odds: 1.15,
+                            league: "Copa del Rey",
+                            market: "home"
+                        }
+                    ],
+                    selection: "Chelsea Win + Barcelona & O1.5",
+                    competition: "EFL Cup / Copa del Rey",
+                    odds: 1.495,
+                    stake: 257.14,
+                    status: "won",
+                    finalScore: "1-5, 0-4",
+                    day: 2,
+                    returns: 384.42,
+                    balanceAfter: 384.42,
+                    targetForDay: 288,
+                    vsTarget: 96.42
+                }
+            ],
             pendingBets: [],
-            settings: { initialBalance: INITIAL_BALANCE, dailyTarget: DAILY_MULTIPLIER, targetDays: TARGET_DAYS }
+            settings: {
+                initialBalance: 200,
+                dailyTarget: 1.20,
+                targetDays: 21
+            }
         };
-        
-        let fixturesCache = {
-            data: [],
-            timestamp: 0,
-            oddsLoaded: false
-        };
-        
+
+        let fixtures = [];
+        let fixturesCache = { data: [], time: 0 };
         let oddsCache = {};
+        let slip = [];
+        let currentFilter = 'all';
+        let selectedBetId = null;
+
+        // ============================================================
+        // UTILITIES
+        // ============================================================
         
-        let betslip = [];
-        let allFixtures = [];
-        let filteredFixtures = [];
-        let currentLeagueFilter = 'all';
-        
-        // ==================== UTILITIES ====================
-        
-        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-        
-        function showNotification(msg, type = 'info') {
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+        function notify(msg, type = 'info') {
             document.querySelectorAll('.notification').forEach(n => n.remove());
             const n = document.createElement('div');
             n.className = `notification notification-${type}`;
@@ -1087,49 +1456,50 @@ const app = initializeApp(firebaseConfig);
             document.body.appendChild(n);
             setTimeout(() => n.remove(), 4000);
         }
-        
-        function formatDate(date) {
-            return new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+
+        function log(msg, obj = null) {
+            const time = new Date().toLocaleTimeString();
+            if (obj) console.log(`[${time}] ${msg}`, obj);
+            else console.log(`[${time}] ${msg}`);
         }
-        
-        function formatTime(date) {
-            return new Date(date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-        }
-        
-        // ==================== FIREBASE ====================
+
+        // ============================================================
+        // FIREBASE
+        // ============================================================
         
         function initFirebase() {
             try {
-                // Check if config is set
-                if (firebaseConfig.apiKey === "YOUR_API_KEY") {
-                    console.log('Firebase not configured - using local storage only');
-                    updateSyncStatus('offline', 'Local Only');
-                    return;
-                }
-                
                 firebase.initializeApp(firebaseConfig);
                 db = firebase.database();
                 
-                // Generate/get user ID
-                userId = localStorage.getItem('userId');
+                // Get or create user ID
+                userId = localStorage.getItem('bet_userId');
                 if (!userId) {
                     userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                    localStorage.setItem('userId', userId);
+                    localStorage.setItem('bet_userId', userId);
                 }
+                
+                log('Firebase initialized. User ID: ' + userId);
                 
                 // Listen for data changes
                 db.ref(`challenges/${userId}`).on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    if (data) {
-                        challengeData = data;
-                        updateUI();
-                        console.log('Data synced from cloud');
+                    const cloudData = snapshot.val();
+                    if (cloudData && !syncPending) {
+                        // Check if cloud data is newer
+                        const cloudTime = cloudData.lastUpdated || 0;
+                        const localTime = data.lastUpdated || 0;
+                        
+                        if (cloudTime > localTime) {
+                            data = cloudData;
+                            log('Data synced from cloud');
+                            updateUI();
+                        }
                     }
                     updateSyncStatus('synced', 'Synced');
                     isOnline = true;
                 });
                 
-                // Connection state
+                // Connection state listener
                 db.ref('.info/connected').on('value', (snap) => {
                     if (snap.val() === true) {
                         updateSyncStatus('synced', 'Synced');
@@ -1140,946 +1510,1004 @@ const app = initializeApp(firebaseConfig);
                     }
                 });
                 
-                console.log('Firebase initialized');
-                
             } catch (e) {
-                console.error('Firebase init error:', e);
+                log('Firebase error:', e);
                 updateSyncStatus('offline', 'Local Only');
             }
         }
-        
+
         function updateSyncStatus(status, text) {
-            const dot = document.getElementById('syncDot');
-            const txt = document.getElementById('syncText');
-            dot.className = `sync-dot ${status}`;
-            txt.textContent = text;
+            document.getElementById('syncDot').className = `sync-dot ${status}`;
+            document.getElementById('syncText').textContent = text;
         }
-        
+
         function saveToCloud() {
             if (db && userId && isOnline) {
-                db.ref(`challenges/${userId}`).set(challengeData)
+                syncPending = true;
+                data.lastUpdated = Date.now();
+                
+                db.ref(`challenges/${userId}`).set(data)
                     .then(() => {
+                        log('Saved to cloud');
                         updateSyncStatus('synced', 'Synced');
+                        syncPending = false;
                     })
                     .catch(e => {
-                        console.error('Save error:', e);
+                        log('Cloud save error:', e);
                         updateSyncStatus('offline', 'Sync Error');
+                        syncPending = false;
                     });
             }
         }
-        
-        // ==================== DATA MANAGEMENT ====================
+
+        // ============================================================
+        // DATA MANAGEMENT
+        // ============================================================
         
         function loadData() {
-            const saved = localStorage.getItem('bettingChallenge');
+            // First try localStorage
+            const saved = localStorage.getItem('betChallenge_v2');
             if (saved) {
                 try {
-                    challengeData = JSON.parse(saved);
+                    const parsed = JSON.parse(saved);
+                    // Only use if it has bets (not empty)
+                    if (parsed.bets && parsed.bets.length > 0) {
+                        data = parsed;
+                    }
                 } catch(e) {
-                    initData();
+                    log('Error parsing saved data:', e);
                 }
-            } else {
-                initData();
             }
+            
+            // Load odds cache
+            const savedOdds = localStorage.getItem('oddsCache_v2');
+            if (savedOdds) {
+                try {
+                    oddsCache = JSON.parse(savedOdds);
+                    // Clean old entries
+                    const now = Date.now();
+                    Object.keys(oddsCache).forEach(k => {
+                        if (now - oddsCache[k].time > ODDS_CACHE_TIME) {
+                            delete oddsCache[k];
+                        }
+                    });
+                } catch(e) {
+                    oddsCache = {};
+                }
+            }
+            
             updateUI();
         }
-        
-        function initData() {
-            challengeData = {
-                startDate: new Date().toISOString().split('T')[0],
-                currentBalance: INITIAL_BALANCE,
-                bets: [],
-                pendingBets: [],
-                settings: { initialBalance: INITIAL_BALANCE, dailyTarget: DAILY_MULTIPLIER, targetDays: TARGET_DAYS }
-            };
-            saveData();
-        }
-        
+
         function saveData() {
-            localStorage.setItem('bettingChallenge', JSON.stringify(challengeData));
+            data.lastUpdated = Date.now();
+            localStorage.setItem('betChallenge_v2', JSON.stringify(data));
+            localStorage.setItem('oddsCache_v2', JSON.stringify(oddsCache));
             saveToCloud();
         }
-        
+
         function exportData() {
-            const blob = new Blob([JSON.stringify(challengeData, null, 2)], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `bet-tracker-${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `bet-tracker-backup-${new Date().toISOString().split('T')[0]}.json`;
             a.click();
-            showNotification('Data exported!', 'success');
+            notify('Data exported successfully!', 'success');
         }
-        
+
         function importData(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = ev => {
                     try {
-                        challengeData = JSON.parse(ev.target.result);
+                        data = JSON.parse(ev.target.result);
                         saveData();
                         updateUI();
-                        showNotification('Data imported!', 'success');
+                        notify('Data imported successfully!', 'success');
                     } catch(err) {
-                        showNotification('Import failed!', 'error');
+                        notify('Import failed - invalid file', 'error');
                     }
                 };
                 reader.readAsText(file);
             }
             e.target.value = '';
         }
-        
-        function confirmReset() {
-            if (confirm('Reset all data? This cannot be undone!')) {
-                localStorage.removeItem('bettingChallenge');
-                initData();
-                updateUI();
-                showNotification('Data reset!', 'success');
-            }
-        }
-        
-        // ==================== API & CACHING ====================
-        
-        async function fetchFixtures(forceRefresh = false) {
-            const apiDot = document.getElementById('apiDot');
-            const apiText = document.getElementById('apiText');
-            const cacheInfo = document.getElementById('cacheInfo');
-            const container = document.getElementById('fixturesContainer');
-            
-            // Check cache
-            const now = Date.now();
-            if (!forceRefresh && fixturesCache.data.length > 0 && (now - fixturesCache.timestamp) < CACHE_DURATION) {
-                const cacheAge = Math.round((now - fixturesCache.timestamp) / 60000);
-                cacheInfo.textContent = `Cached ${cacheAge}m ago`;
-                apiDot.className = 'api-dot online';
-                apiText.textContent = `${fixturesCache.data.length}`;
-                allFixtures = fixturesCache.data;
-                applyFilters();
-                return;
-            }
-            
-            apiDot.className = 'api-dot loading';
-            apiText.textContent = 'Loading...';
-            cacheInfo.textContent = '';
-            container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-            
-            allFixtures = [];
-            
-            // Get dates range (today + 3 days)
-            const dates = [];
-            const filterDate = document.getElementById('filterDate').value;
-            
-            if (filterDate) {
-                dates.push(filterDate);
-            } else {
-                for (let i = 0; i < 4; i++) {
-                    const d = new Date();
-                    d.setDate(d.getDate() + i);
-                    dates.push(d.toISOString().split('T')[0]);
+
+        function resetData() {
+            if (confirm('⚠️ Reset ALL data? This cannot be undone!')) {
+                if (confirm('Are you absolutely sure? All progress will be lost!')) {
+                    localStorage.removeItem('betChallenge_v2');
+                    localStorage.removeItem('oddsCache_v2');
+                    oddsCache = {};
+                    
+                    data = {
+                        startDate: new Date().toISOString().split('T')[0],
+                        currentBalance: INITIAL,
+                        bets: [],
+                        pendingBets: [],
+                        settings: { initialBalance: INITIAL, dailyTarget: MULT, targetDays: DAYS }
+                    };
+                    
+                    saveData();
+                    updateUI();
+                    notify('All data reset', 'success');
                 }
             }
-            
+        }
+
+        // ============================================================
+        // API CALLS
+        // ============================================================
+        
+        async function apiCall(endpoint) {
             try {
-                // Prioritized league fetching
-                const priorityLeagues = [39, 140, 78, 135, 61, 40, 48, 45, 143, 81, 137, 2, 3, 848, 307, 94, 88, 203, 179, 667];
-                
-                for (const lid of priorityLeagues) {
-                    for (const date of dates) {
-                        try {
-                            const res = await fetch(`${API_BASE}/fixtures?league=${lid}&date=${date}`, {
-                                headers: { 'x-apisports-key': API_KEY }
-                            });
-                            
-                            if (res.ok) {
-                                const data = await res.json();
-                                if (data.response && data.response.length > 0) {
-                                    // Fetch odds for these fixtures
-                                    const fixturesWithOdds = await enrichWithOdds(data.response);
-                                    allFixtures.push(...fixturesWithOdds);
-                                }
-                            }
-                        } catch(e) {
-                            console.warn(`Error fetching league ${lid}:`, e);
-                        }
-                        await sleep(100);
-                    }
-                }
-                
-                // Update cache
-                fixturesCache = {
-                    data: allFixtures,
-                    timestamp: Date.now(),
-                    oddsLoaded: true
-                };
-                
-                apiDot.className = 'api-dot online';
-                apiText.textContent = `${allFixtures.length}`;
-                cacheInfo.textContent = 'Just updated';
-                
-                buildLeagueTabs();
-                applyFilters();
-                
-                if (forceRefresh) {
-                    showNotification(`Loaded ${allFixtures.length} fixtures`, 'success');
-                }
-                
-            } catch(e) {
-                console.error('Fetch error:', e);
-                apiDot.className = 'api-dot offline';
-                apiText.textContent = 'Error';
-                showNotification('Failed to load fixtures', 'error');
-            }
-        }
-        
-        async function enrichWithOdds(fixtures) {
-            // For each fixture, try to get odds from cache or API
-            const enriched = [];
-            
-            for (const fix of fixtures) {
-                const fixtureId = fix.fixture.id;
-                
-                // Check odds cache
-                if (oddsCache[fixtureId] && (Date.now() - oddsCache[fixtureId].timestamp) < ODDS_CACHE_DURATION) {
-                    fix.odds = oddsCache[fixtureId].data;
-                } else {
-                    // We'll load odds on demand to save API calls
-                    fix.odds = null;
-                }
-                
-                enriched.push(fix);
-            }
-            
-            return enriched;
-        }
-        
-        async function loadOddsForFixture(fixtureId) {
-            // Check cache first
-            if (oddsCache[fixtureId] && (Date.now() - oddsCache[fixtureId].timestamp) < ODDS_CACHE_DURATION) {
-                return oddsCache[fixtureId].data;
-            }
-            
-            try {
-                const res = await fetch(`${API_BASE}/odds?fixture=${fixtureId}`, {
+                const res = await fetch(`${API_BASE}${endpoint}`, {
                     headers: { 'x-apisports-key': API_KEY }
                 });
                 
                 if (res.ok) {
-                    const data = await res.json();
-                    if (data.response && data.response.length > 0) {
-                        const odds = parseOddsResponse(data.response[0]);
-                        oddsCache[fixtureId] = { data: odds, timestamp: Date.now() };
-                        return odds;
+                    const json = await res.json();
+                    if (json.errors && Object.keys(json.errors).length > 0) {
+                        log('API Error:', json.errors);
+                        return null;
                     }
+                    return json.response || [];
                 }
+                return null;
             } catch(e) {
-                console.warn('Odds fetch error:', e);
+                log('API call failed:', e);
+                return null;
             }
-            
-            return null;
         }
-        
-        function parseOddsResponse(oddsData) {
-            const parsed = {
+
+        async function loadFixtures(force = false) {
+            const dot = document.getElementById('apiDot');
+            const txt = document.getElementById('apiText');
+            const cont = document.getElementById('fixtures');
+
+            // Check cache
+            const now = Date.now();
+            if (!force && fixturesCache.data.length > 0 && (now - fixturesCache.time) < FIXTURES_CACHE_TIME) {
+                const age = Math.round((now - fixturesCache.time) / 60000);
+                log(`Using cached fixtures (${age}m old)`);
+                dot.className = 'api-dot online';
+                txt.textContent = `${fixturesCache.data.length} (cached)`;
+                fixtures = fixturesCache.data;
+                buildTabs();
+                renderFixtures();
+                return;
+            }
+
+            dot.className = 'api-dot loading';
+            txt.textContent = 'Loading...';
+            cont.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+            fixtures = [];
+            
+            log('Fetching fixtures...');
+
+            try {
+                for (const lid of FETCH_LEAGUES) {
+                    try {
+                        const response = await apiCall(`/fixtures?league=${lid}&next=10`);
+                        if (response && response.length > 0) {
+                            fixtures.push(...response);
+                            log(`✓ ${LEAGUES[lid]?.short || lid}: ${response.length} fixtures`);
+                        }
+                    } catch(e) {
+                        log(`✗ League ${lid}: ${e.message}`);
+                    }
+                    await sleep(80);
+                }
+
+                // Update cache
+                fixturesCache = { data: fixtures, time: Date.now() };
+                
+                log(`Loaded ${fixtures.length} fixtures. Now fetching odds...`);
+                dot.className = 'api-dot loading';
+                txt.textContent = `${fixtures.length} - Loading odds...`;
+
+                // Fetch odds
+                await loadAllOdds();
+
+                dot.className = 'api-dot online';
+                txt.textContent = fixtures.length;
+                
+                buildTabs();
+                renderFixtures();
+                saveData();
+
+                if (fixtures.length === 0) {
+                    cont.innerHTML = '<div class="empty"><div class="empty-icon">📅</div><p>No fixtures found</p></div>';
+                } else {
+                    notify(`Loaded ${fixtures.length} fixtures with odds`, 'success');
+                }
+
+            } catch(e) {
+                log('Fetch error:', e);
+                dot.className = 'api-dot offline';
+                txt.textContent = 'Error';
+                cont.innerHTML = `
+                    <div class="empty">
+                        <div class="empty-icon">⚠️</div>
+                        <p>Failed to load fixtures</p>
+                        <button class="btn btn-success" onclick="loadFixtures(true)" style="margin-top:12px">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadAllOdds() {
+            // Group fixtures by league and date for efficient fetching
+            const grouped = {};
+            
+            fixtures.forEach(f => {
+                const date = f.fixture.date.split('T')[0];
+                const league = f.league.id;
+                const key = `${league}_${date}`;
+                
+                if (!grouped[key]) {
+                    grouped[key] = { league, date, fixtureIds: [] };
+                }
+                grouped[key].fixtureIds.push(f.fixture.id);
+            });
+
+            log(`Fetching odds for ${Object.keys(grouped).length} league/date combinations...`);
+
+            for (const key of Object.keys(grouped)) {
+                const { league, date, fixtureIds } = grouped[key];
+                
+                // Check if all fixtures have cached odds
+                const allCached = fixtureIds.every(fid => 
+                    oddsCache[fid] && (Date.now() - oddsCache[fid].time) < ODDS_CACHE_TIME
+                );
+                
+                if (allCached) {
+                    continue;
+                }
+                
+                try {
+                    // Fetch odds for entire league/date in one call (more efficient)
+                    const response = await apiCall(`/odds?league=${league}&date=${date}`);
+                    
+                    if (response && response.length > 0) {
+                        response.forEach(oddsData => {
+                            const fid = oddsData.fixture.id;
+                            const parsed = parseOdds(oddsData);
+                            oddsCache[fid] = { odds: parsed, time: Date.now() };
+                        });
+                        log(`✓ Odds: ${LEAGUES[league]?.short || league} ${date}`);
+                    }
+                } catch(e) {
+                    log(`✗ Odds for league ${league}: ${e.message}`);
+                }
+                
+                await sleep(100);
+            }
+
+            log('Odds loading complete');
+        }
+
+        function parseOdds(oddsData) {
+            const result = {
                 home: null,
                 draw: null,
                 away: null,
                 over15: null,
                 over25: null,
+                over35: null,
+                under15: null,
                 under25: null,
+                under35: null,
                 bttsYes: null,
-                bttsNo: null
+                bttsNo: null,
+                homeOrDraw: null,
+                awayOrDraw: null,
+                bookmaker: null
             };
+
+            if (!oddsData || !oddsData.bookmakers || oddsData.bookmakers.length === 0) {
+                return result;
+            }
+
+            // Find preferred bookmaker
+            let bookmaker = null;
+            for (const pref of PREFERRED_BOOKMAKERS) {
+                bookmaker = oddsData.bookmakers.find(b => b.name === pref);
+                if (bookmaker) break;
+            }
             
-            if (!oddsData || !oddsData.bookmakers) return parsed;
-            
-            // Find best bookmaker (prefer Bet365, Pinnacle, or first available)
-            const bookmaker = oddsData.bookmakers.find(b => b.name === 'Bet365') 
-                || oddsData.bookmakers.find(b => b.name === 'Pinnacle')
-                || oddsData.bookmakers[0];
-            
-            if (!bookmaker || !bookmaker.bets) return parsed;
-            
+            if (!bookmaker) bookmaker = oddsData.bookmakers[0];
+            result.bookmaker = bookmaker.name;
+
             for (const bet of bookmaker.bets) {
-                if (bet.name === 'Match Winner') {
-                    for (const val of bet.values) {
-                        if (val.value === 'Home') parsed.home = parseFloat(val.odd);
-                        if (val.value === 'Draw') parsed.draw = parseFloat(val.odd);
-                        if (val.value === 'Away') parsed.away = parseFloat(val.odd);
-                    }
-                }
-                if (bet.name === 'Goals Over/Under') {
-                    for (const val of bet.values) {
-                        if (val.value === 'Over 1.5') parsed.over15 = parseFloat(val.odd);
-                        if (val.value === 'Over 2.5') parsed.over25 = parseFloat(val.odd);
-                        if (val.value === 'Under 2.5') parsed.under25 = parseFloat(val.odd);
-                    }
-                }
-                if (bet.name === 'Both Teams Score') {
-                    for (const val of bet.values) {
-                        if (val.value === 'Yes') parsed.bttsYes = parseFloat(val.odd);
-                        if (val.value === 'No') parsed.bttsNo = parseFloat(val.odd);
-                    }
+                switch (bet.name) {
+                    case 'Match Winner':
+                        bet.values.forEach(v => {
+                            if (v.value === 'Home') result.home = parseFloat(v.odd);
+                            if (v.value === 'Draw') result.draw = parseFloat(v.odd);
+                            if (v.value === 'Away') result.away = parseFloat(v.odd);
+                        });
+                        break;
+                        
+                    case 'Goals Over/Under':
+                        bet.values.forEach(v => {
+                            if (v.value === 'Over 1.5') result.over15 = parseFloat(v.odd);
+                            if (v.value === 'Over 2.5') result.over25 = parseFloat(v.odd);
+                            if (v.value === 'Over 3.5') result.over35 = parseFloat(v.odd);
+                            if (v.value === 'Under 1.5') result.under15 = parseFloat(v.odd);
+                            if (v.value === 'Under 2.5') result.under25 = parseFloat(v.odd);
+                            if (v.value === 'Under 3.5') result.under35 = parseFloat(v.odd);
+                        });
+                        break;
+                        
+                    case 'Both Teams Score':
+                        bet.values.forEach(v => {
+                            if (v.value === 'Yes') result.bttsYes = parseFloat(v.odd);
+                            if (v.value === 'No') result.bttsNo = parseFloat(v.odd);
+                        });
+                        break;
+                        
+                    case 'Double Chance':
+                        bet.values.forEach(v => {
+                            if (v.value === 'Home/Draw') result.homeOrDraw = parseFloat(v.odd);
+                            if (v.value === 'Away/Draw') result.awayOrDraw = parseFloat(v.odd);
+                        });
+                        break;
                 }
             }
-            
-            return parsed;
+
+            return result;
         }
-        
-        function refreshFixtures(force = false) {
-            fetchFixtures(force);
+
+        function getOddsForFixture(fixtureId) {
+            const cached = oddsCache[fixtureId];
+            if (cached && (Date.now() - cached.time) < ODDS_CACHE_TIME) {
+                return cached.odds;
+            }
+            return null;
         }
-        
-        // ==================== FIXTURES DISPLAY ====================
-        
-        function buildLeagueTabs() {
-            const container = document.getElementById('leagueTabs');
+
+        async function loadSingleFixtureOdds(fixtureId) {
+            notify('Loading odds...', 'info');
             
-            // Get unique leagues from fixtures
-            const leaguesInFixtures = new Set();
-            allFixtures.forEach(f => leaguesInFixtures.add(f.league.id));
-            
-            let html = `<button class="tab active" onclick="filterByLeague('all', this)">All (${allFixtures.length})</button>`;
-            
-            // Sort leagues by priority
-            const sortedLeagues = Array.from(leaguesInFixtures)
-                .filter(id => LEAGUES[id])
-                .sort((a, b) => (LEAGUES[a]?.priority || 999) - (LEAGUES[b]?.priority || 999));
-            
-            for (const lid of sortedLeagues) {
-                const league = LEAGUES[lid];
-                const count = allFixtures.filter(f => f.league.id === lid).length;
-                if (count > 0) {
-                    html += `<button class="tab" onclick="filterByLeague(${lid}, this)">${league.flag} ${league.short} (${count})</button>`;
+            try {
+                const response = await apiCall(`/odds?fixture=${fixtureId}`);
+                if (response && response.length > 0) {
+                    const parsed = parseOdds(response[0]);
+                    oddsCache[fixtureId] = { odds: parsed, time: Date.now() };
+                    saveData();
+                    renderFixtures();
+                    notify(`Odds loaded (${parsed.bookmaker || 'Unknown'})`, 'success');
+                } else {
+                    notify('No odds available for this match', 'warning');
                 }
+            } catch(e) {
+                notify('Failed to load odds', 'error');
             }
-            
-            container.innerHTML = html;
         }
+
+        // ============================================================
+        // FIXTURES DISPLAY
+        // ============================================================
         
-        function filterByLeague(leagueId, btn) {
-            document.querySelectorAll('#leagueTabs .tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
-            currentLeagueFilter = leagueId;
-            applyFilters();
-        }
-        
-        function applyFilters() {
-            let fixtures = [...allFixtures];
+        function buildTabs() {
+            const leaguesInFixtures = [...new Set(fixtures.map(f => f.league.id))];
+            const tabs = document.getElementById('tabs');
             
-            // League filter
-            if (currentLeagueFilter !== 'all') {
-                fixtures = fixtures.filter(f => f.league.id === currentLeagueFilter);
-            }
-            
-            // Date filter
-            const filterDate = document.getElementById('filterDate').value;
-            if (filterDate) {
-                fixtures = fixtures.filter(f => f.fixture.date.startsWith(filterDate));
-            }
-            
-            // Status filter
-            const status = document.getElementById('filterStatus').value;
-            if (status !== 'all') {
-                fixtures = fixtures.filter(f => {
-                    const s = f.fixture.status.short;
-                    if (status === 'upcoming') return ['NS', 'TBD', 'PST'].includes(s);
-                    if (status === 'live') return ['1H', '2H', 'HT', 'ET', 'P', 'BT'].includes(s);
-                    if (status === 'finished') return ['FT', 'AET', 'PEN'].includes(s);
-                    return true;
-                });
-            }
-            
-            // Odds filter
-            const minOdds = parseFloat(document.getElementById('filterOddsMin').value) || 0;
-            const maxOdds = parseFloat(document.getElementById('filterOddsMax').value) || 999;
-            
-            if (minOdds > 0 || maxOdds < 999) {
-                fixtures = fixtures.filter(f => {
-                    if (!f.odds) return true; // Keep fixtures without odds loaded
-                    const odds = f.odds.home || f.odds.away || 1;
-                    return odds >= minOdds && odds <= maxOdds;
-                });
-            }
-            
-            // Sort
-            const sortBy = document.getElementById('filterSort').value;
-            fixtures.sort((a, b) => {
-                switch(sortBy) {
-                    case 'time':
-                        return new Date(a.fixture.date) - new Date(b.fixture.date);
-                    case 'odds-low':
-                        return (a.odds?.home || 99) - (b.odds?.home || 99);
-                    case 'odds-high':
-                        return (b.odds?.home || 0) - (a.odds?.home || 0);
-                    case 'league':
-                        return (LEAGUES[a.league.id]?.priority || 999) - (LEAGUES[b.league.id]?.priority || 999);
-                    default:
-                        return 0;
-                }
+            // Sort by priority
+            leaguesInFixtures.sort((a, b) => {
+                const pa = LEAGUES[a]?.priority || 999;
+                const pb = LEAGUES[b]?.priority || 999;
+                return pa - pb;
             });
             
-            filteredFixtures = fixtures;
-            displayFixtures(fixtures);
-        }
-        
-        function displayFixtures(fixtures) {
-            const container = document.getElementById('fixturesContainer');
+            let html = `<button class="tab ${currentFilter === 'all' ? 'active' : ''}" onclick="filterLeague('all')">All (${fixtures.length})</button>`;
             
-            if (!fixtures || fixtures.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📅</div>
-                        <p>No fixtures found</p>
-                        <button class="btn btn-primary" onclick="refreshFixtures(true)" style="margin-top:10px">Refresh</button>
-                    </div>`;
+            leaguesInFixtures.forEach(lid => {
+                const l = LEAGUES[lid] || { short: 'Other', flag: '⚽' };
+                const count = fixtures.filter(f => f.league.id === lid).length;
+                html += `<button class="tab ${currentFilter == lid ? 'active' : ''}" onclick="filterLeague(${lid})">${l.flag} ${l.short} (${count})</button>`;
+            });
+            
+            tabs.innerHTML = html;
+        }
+
+        function filterLeague(lid) {
+            currentFilter = lid;
+            buildTabs();
+            renderFixtures();
+        }
+
+        function renderFixtures() {
+            let list = currentFilter === 'all' ? fixtures : fixtures.filter(f => f.league.id === currentFilter);
+            list = list.sort((a, b) => new Date(a.fixture.date) - new Date(b.fixture.date));
+            
+            const cont = document.getElementById('fixtures');
+            
+            if (!list.length) {
+                cont.innerHTML = '<div class="empty"><div class="empty-icon">📅</div><p>No fixtures</p></div>';
                 return;
             }
-            
-            container.innerHTML = fixtures.map(f => {
+
+            cont.innerHTML = list.map(f => {
                 const fix = f.fixture;
                 const teams = f.teams;
-                const league = LEAGUES[f.league.id] || { name: f.league.name, short: f.league.name.substring(0,4), flag: '⚽' };
-                const goals = f.goals;
-                const odds = f.odds || {};
+                const league = LEAGUES[f.league.id] || { short: f.league.name?.substring(0,6) || 'Other', flag: '⚽', name: f.league.name };
                 
                 const date = new Date(fix.date);
-                const dateStr = formatDate(fix.date);
-                const timeStr = formatTime(fix.date);
-                
-                const status = fix.status.short;
-                const isLive = ['1H', '2H', 'HT', 'ET', 'P', 'BT'].includes(status);
-                const isFinished = ['FT', 'AET', 'PEN'].includes(status);
+                const dateStr = date.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short' });
+                const timeStr = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
                 
                 const home = teams.home.name.replace(/'/g, "\\'");
                 const away = teams.away.name.replace(/'/g, "\\'");
-                const fixtureId = fix.id;
+                const inSlip = slip.some(s => s.fixtureId === fix.id);
                 
-                // Check if any selection from this fixture is in betslip
-                const inBetslip = betslip.some(b => b.fixtureId === fixtureId);
-                const cardClass = inBetslip ? 'match-card in-betslip' : 'match-card';
-                
-                let statusBadge = '';
-                if (isLive) statusBadge = `<span class="badge badge-live">🔴 ${status} ${goals.home}-${goals.away}</span>`;
-                else if (isFinished) statusBadge = `<span class="badge">FT ${goals.home}-${goals.away}</span>`;
-                
+                const odds = getOddsForFixture(fix.id);
+                const hasOdds = odds && odds.home;
+
                 return `
-                    <div class="${cardClass}" data-fixture="${fixtureId}">
-                        <div class="match-header">
+                    <div class="match ${inSlip ? 'in-slip' : ''}" data-id="${fix.id}">
+                        <div class="match-top">
                             <span class="match-league">${league.flag} ${league.short}</span>
-                            <span class="match-time">${statusBadge || dateStr + ' ' + timeStr}</span>
+                            <span class="match-time">${dateStr} ${timeStr}</span>
                         </div>
                         <div class="match-teams">
-                            <div class="team-info">
+                            <div class="team">
                                 ${teams.home.logo ? `<img src="${teams.home.logo}" class="team-logo" onerror="this.style.display='none'">` : ''}
                                 <span class="team-name">${teams.home.name}</span>
                             </div>
-                            <div class="match-score">${isLive || isFinished ? `${goals.home}-${goals.away}` : 'vs'}</div>
-                            <div class="team-info away">
+                            <span class="match-vs">vs</span>
+                            <div class="team away">
                                 ${teams.away.logo ? `<img src="${teams.away.logo}" class="team-logo" onerror="this.style.display='none'">` : ''}
                                 <span class="team-name">${teams.away.name}</span>
                             </div>
                         </div>
-                        <div class="odds-row">
-                            <div class="odd-btn ${isOddSelected(fixtureId, 'home') ? 'in-betslip' : ''}" onclick="addToBetslip(${fixtureId}, 'home', '${home}', '${away}', ${odds.home || 0}, '${league.name}', '${fix.date}')">
-                                <div class="odd-label">1</div>
-                                <div class="odd-value ${odds.home ? '' : 'loading'}">${odds.home ? odds.home.toFixed(2) : '-'}</div>
+                        ${hasOdds ? `
+                            <div class="odds-row">
+                                <div class="odd ${isSelected(fix.id, 'home') ? 'selected' : ''}" onclick="addToSlip(${fix.id}, 'home', '${home}', '${away}', ${odds.home}, '${league.name}')">
+                                    <div class="odd-label">1</div>
+                                    <div class="odd-value">${odds.home.toFixed(2)}</div>
+                                </div>
+                                <div class="odd ${isSelected(fix.id, 'draw') ? 'selected' : ''}" onclick="addToSlip(${fix.id}, 'draw', '${home}', '${away}', ${odds.draw || 0}, '${league.name}')">
+                                    <div class="odd-label">X</div>
+                                    <div class="odd-value">${odds.draw ? odds.draw.toFixed(2) : '-'}</div>
+                                </div>
+                                <div class="odd ${isSelected(fix.id, 'away') ? 'selected' : ''}" onclick="addToSlip(${fix.id}, 'away', '${home}', '${away}', ${odds.away}, '${league.name}')">
+                                    <div class="odd-label">2</div>
+                                    <div class="odd-value">${odds.away.toFixed(2)}</div>
+                                </div>
                             </div>
-                            <div class="odd-btn ${isOddSelected(fixtureId, 'draw') ? 'in-betslip' : ''}" onclick="addToBetslip(${fixtureId}, 'draw', '${home}', '${away}', ${odds.draw || 0}, '${league.name}', '${fix.date}')">
-                                <div class="odd-label">X</div>
-                                <div class="odd-value ${odds.draw ? '' : 'loading'}">${odds.draw ? odds.draw.toFixed(2) : '-'}</div>
+                            <div class="odds-row" style="margin-top:4px">
+                                ${odds.over15 ? `
+                                    <div class="odd ${isSelected(fix.id, 'o15') ? 'selected' : ''}" onclick="addToSlip(${fix.id}, 'o15', '${home}', '${away}', ${odds.over15}, '${league.name}')">
+                                        <div class="odd-label">O1.5</div>
+                                        <div class="odd-value">${odds.over15.toFixed(2)}</div>
+                                    </div>
+                                ` : ''}
+                                ${odds.over25 ? `
+                                    <div class="odd ${isSelected(fix.id, 'o25') ? 'selected' : ''}" onclick="addToSlip(${fix.id}, 'o25', '${home}', '${away}', ${odds.over25}, '${league.name}')">
+                                        <div class="odd-label">O2.5</div>
+                                        <div class="odd-value">${odds.over25.toFixed(2)}</div>
+                                    </div>
+                                ` : ''}
+                                ${odds.under25 ? `
+                                    <div class="odd ${isSelected(fix.id, 'u25') ? 'selected' : ''}" onclick="addToSlip(${fix.id}, 'u25', '${home}', '${away}', ${odds.under25}, '${league.name}')">
+                                        <div class="odd-label">U2.5</div>
+                                        <div class="odd-value">${odds.under25.toFixed(2)}</div>
+                                    </div>
+                                ` : ''}
+                                ${odds.bttsYes ? `
+                                    <div class="odd ${isSelected(fix.id, 'btts') ? 'selected' : ''}" onclick="addToSlip(${fix.id}, 'btts', '${home}', '${away}', ${odds.bttsYes}, '${league.name}')">
+                                        <div class="odd-label">BTTS</div>
+                                        <div class="odd-value">${odds.bttsYes.toFixed(2)}</div>
+                                    </div>
+                                ` : ''}
                             </div>
-                            <div class="odd-btn ${isOddSelected(fixtureId, 'away') ? 'in-betslip' : ''}" onclick="addToBetslip(${fixtureId}, 'away', '${home}', '${away}', ${odds.away || 0}, '${league.name}', '${fix.date}')">
-                                <div class="odd-label">2</div>
-                                <div class="odd-value ${odds.away ? '' : 'loading'}">${odds.away ? odds.away.toFixed(2) : '-'}</div>
-                            </div>
-                            <div class="odd-btn ${isOddSelected(fixtureId, 'over25') ? 'in-betslip' : ''}" onclick="addToBetslip(${fixtureId}, 'over25', '${home}', '${away}', ${odds.over25 || 0}, '${league.name}', '${fix.date}')">
-                                <div class="odd-label">O2.5</div>
-                                <div class="odd-value ${odds.over25 ? '' : 'loading'}">${odds.over25 ? odds.over25.toFixed(2) : '-'}</div>
-                            </div>
-                            <div class="odd-btn ${isOddSelected(fixtureId, 'under25') ? 'in-betslip' : ''}" onclick="addToBetslip(${fixtureId}, 'under25', '${home}', '${away}', ${odds.under25 || 0}, '${league.name}', '${fix.date}')">
-                                <div class="odd-label">U2.5</div>
-                                <div class="odd-value ${odds.under25 ? '' : 'loading'}">${odds.under25 ? odds.under25.toFixed(2) : '-'}</div>
-                            </div>
-                        </div>
-                        ${!odds.home ? `<button class="btn btn-sm btn-secondary" style="width:100%;margin-top:6px" onclick="event.stopPropagation(); loadOdds(${fixtureId})">Load Odds</button>` : ''}
+                            ${odds.bookmaker ? `<div class="bookmaker-info">via ${odds.bookmaker}</div>` : ''}
+                        ` : `
+                            <button class="btn btn-sm btn-secondary load-odds-btn" onclick="loadSingleFixtureOdds(${fix.id})">📊 Load Odds</button>
+                        `}
                     </div>
                 `;
             }).join('');
         }
+
+        // ============================================================
+        // BETSLIP
+        // ============================================================
         
-        async function loadOdds(fixtureId) {
-            showNotification('Loading odds...', 'info');
-            const odds = await loadOddsForFixture(fixtureId);
-            
-            if (odds) {
-                // Update the fixture in cache
-                const fixture = allFixtures.find(f => f.fixture.id === fixtureId);
-                if (fixture) {
-                    fixture.odds = odds;
-                }
-                applyFilters();
-                showNotification('Odds loaded', 'success');
-            } else {
-                showNotification('Odds not available', 'warning');
-            }
+        function isSelected(fid, mkt) {
+            return slip.some(s => s.fixtureId === fid && s.market === mkt);
         }
-        
-        // ==================== BETSLIP ====================
-        
-        function isOddSelected(fixtureId, market) {
-            return betslip.some(b => b.fixtureId === fixtureId && b.market === market);
-        }
-        
-        function addToBetslip(fixtureId, market, home, away, odds, league, date) {
+
+        function addToSlip(fid, mkt, home, away, odds, league) {
             if (!odds || odds <= 0) {
-                showNotification('Odds not available - load odds first', 'warning');
+                notify('Invalid odds - please load odds first', 'warning');
                 return;
             }
             
-            // Check if already in betslip
-            const existingIndex = betslip.findIndex(b => b.fixtureId === fixtureId && b.market === market);
+            const idx = slip.findIndex(s => s.fixtureId === fid && s.market === mkt);
             
-            if (existingIndex >= 0) {
-                // Remove from betslip
-                betslip.splice(existingIndex, 1);
+            if (idx >= 0) {
+                slip.splice(idx, 1);
             } else {
-                // Add to betslip
-                const marketLabels = {
-                    home: `${home} to Win`,
+                const labels = {
+                    home: `${home} Win`,
                     draw: 'Draw',
-                    away: `${away} to Win`,
-                    over25: 'Over 2.5 Goals',
-                    under25: 'Under 2.5 Goals',
-                    over15: 'Over 1.5 Goals',
-                    bttsYes: 'BTTS Yes',
-                    bttsNo: 'BTTS No'
+                    away: `${away} Win`,
+                    o15: 'Over 1.5 Goals',
+                    o25: 'Over 2.5 Goals',
+                    o35: 'Over 3.5 Goals',
+                    u15: 'Under 1.5 Goals',
+                    u25: 'Under 2.5 Goals',
+                    u35: 'Under 3.5 Goals',
+                    btts: 'Both Teams to Score',
+                    bttsNo: 'BTTS No',
+                    homeOrDraw: 'Home or Draw (1X)',
+                    awayOrDraw: 'Away or Draw (X2)'
                 };
                 
-                betslip.push({
-                    fixtureId,
-                    market,
+                slip.push({
+                    fixtureId: fid,
+                    market: mkt,
                     home,
                     away,
-                    odds,
                     league,
-                    date,
-                    selection: marketLabels[market] || market,
+                    selection: labels[mkt] || mkt,
+                    odds: parseFloat(odds.toFixed(2)),
                     match: `${home} vs ${away}`
                 });
             }
             
-            updateBetslip();
-            applyFilters(); // Refresh display to show selection state
+            updateSlip();
+            renderFixtures();
         }
-        
-        function removeBetslipLeg(index) {
-            betslip.splice(index, 1);
-            updateBetslip();
-            applyFilters();
+
+        function removeSlipLeg(idx) {
+            slip.splice(idx, 1);
+            updateSlip();
+            renderFixtures();
         }
-        
-        function clearBetslip() {
-            betslip = [];
-            updateBetslip();
-            applyFilters();
+
+        function clearSlip() {
+            slip = [];
+            updateSlip();
+            renderFixtures();
         }
-        
-        function updateBetslip() {
-            const countEl = document.getElementById('betslipCount');
-            const legsEl = document.getElementById('betslipLegs');
-            const typeEl = document.getElementById('betslipType');
-            const selectionsEl = document.getElementById('betslipSelections');
-            const oddsEl = document.getElementById('betslipOdds');
-            const stakeEl = document.getElementById('betslipStake');
-            const submitBtn = document.getElementById('betslipSubmit');
-            
-            countEl.textContent = betslip.length;
-            selectionsEl.textContent = betslip.length;
-            
-            // Bet type
-            const types = ['None', 'Single', 'Double', 'Treble', '4-Fold', '5-Fold', '6-Fold', '7-Fold', '8-Fold'];
-            typeEl.textContent = types[Math.min(betslip.length, types.length - 1)] || `${betslip.length}-Fold`;
-            
-            // Combined odds
-            const combinedOdds = betslip.reduce((acc, b) => acc * b.odds, 1);
-            oddsEl.textContent = combinedOdds.toFixed(2);
-            
-            // Set default stake
-            if (!stakeEl.value || stakeEl.value === '0') {
-                stakeEl.value = challengeData.currentBalance.toFixed(2);
+
+        function updateSlip() {
+            const count = document.getElementById('slipCount');
+            const legs = document.getElementById('slipLegs');
+            const type = document.getElementById('slipType');
+            const selCount = document.getElementById('slipSelCount');
+            const oddsEl = document.getElementById('slipOdds');
+            const stake = document.getElementById('slipStake');
+            const submit = document.getElementById('slipSubmit');
+
+            count.textContent = slip.length;
+            selCount.textContent = slip.length;
+
+            const types = ['-', 'Single', 'Double', 'Treble', '4-Fold Acca', '5-Fold Acca', '6-Fold Acca', '7-Fold Acca', '8-Fold Acca'];
+            type.textContent = types[Math.min(slip.length, 8)] || `${slip.length}-Fold Acca`;
+
+            const combOdds = slip.reduce((a, s) => a * s.odds, 1);
+            oddsEl.textContent = combOdds.toFixed(2);
+
+            if (!stake.value || stake.value === '0') {
+                stake.value = data.currentBalance.toFixed(2);
             }
-            
-            // Legs display
-            if (betslip.length === 0) {
-                legsEl.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><p>Click on odds to add selections</p></div>`;
+
+            if (slip.length === 0) {
+                legs.innerHTML = '<div class="empty"><div class="empty-icon">📝</div><p>Click on odds to add selections</p></div>';
             } else {
-                legsEl.innerHTML = betslip.map((b, i) => `
-                    <div class="betslip-leg">
-                        <button class="betslip-leg-remove" onclick="removeBetslipLeg(${i})">×</button>
-                        <div class="betslip-leg-match">${b.match} • ${b.league}</div>
-                        <div class="betslip-leg-selection">${b.selection}</div>
-                        <div class="betslip-leg-odds">@ ${b.odds.toFixed(2)}</div>
+                legs.innerHTML = slip.map((s, i) => `
+                    <div class="slip-leg">
+                        <button class="slip-leg-remove" onclick="removeSlipLeg(${i})">×</button>
+                        <div class="slip-leg-match">${s.match}</div>
+                        <div class="slip-leg-sel">${s.selection}</div>
+                        <div class="slip-leg-odds">@ ${s.odds.toFixed(2)}</div>
                     </div>
                 `).join('');
             }
-            
-            // Submit button
-            submitBtn.disabled = betslip.length === 0;
-            
-            updateBetslipReturns();
+
+            submit.disabled = slip.length === 0;
+            updateSlipReturns();
         }
-        
-        function updateBetslipReturns() {
-            const stake = parseFloat(document.getElementById('betslipStake').value) || 0;
-            const combinedOdds = betslip.reduce((acc, b) => acc * b.odds, 1);
-            const returns = stake * combinedOdds;
-            document.getElementById('betslipReturns').textContent = `£${returns.toFixed(2)}`;
+
+        function updateSlipReturns() {
+            const stake = parseFloat(document.getElementById('slipStake').value) || 0;
+            const combOdds = slip.reduce((a, s) => a * s.odds, 1);
+            document.getElementById('slipReturns').textContent = `£${(stake * combOdds).toFixed(2)}`;
         }
-        
-        function toggleBetslip() {
-            const betslipEl = document.getElementById('betslip');
-            betslipEl.classList.toggle('open');
+
+        function toggleSlip() {
+            document.getElementById('slipPanel').classList.toggle('open');
         }
-        
+
         function placeBet() {
-            if (betslip.length === 0) return;
+            if (slip.length === 0) return;
             
-            const stake = parseFloat(document.getElementById('betslipStake').value);
-            const notes = document.getElementById('betslipNotes').value;
-            
+            const stake = parseFloat(document.getElementById('slipStake').value);
             if (!stake || stake <= 0) {
-                showNotification('Enter a valid stake', 'error');
+                notify('Please enter a valid stake', 'error');
                 return;
             }
-            
-            if (stake > challengeData.currentBalance) {
-                showNotification('Stake exceeds balance!', 'error');
+            if (stake > data.currentBalance) {
+                notify('Stake exceeds your current balance!', 'error');
                 return;
             }
-            
-            const combinedOdds = betslip.reduce((acc, b) => acc * b.odds, 1);
+
+            const combOdds = slip.reduce((a, s) => a * s.odds, 1);
             const types = ['', 'single', 'double', 'treble', 'accumulator'];
-            
+
             const bet = {
                 id: Date.now(),
                 date: new Date().toISOString().split('T')[0],
-                type: types[Math.min(betslip.length, 4)] || 'accumulator',
-                legs: betslip.map(b => ({
-                    match: b.match,
-                    selection: b.selection,
-                    odds: b.odds,
-                    league: b.league,
-                    fixtureDate: b.date
+                type: types[Math.min(slip.length, 4)] || 'accumulator',
+                legs: slip.map(s => ({
+                    match: s.match,
+                    selection: s.selection,
+                    odds: s.odds,
+                    league: s.league,
+                    market: s.market
                 })),
-                selection: betslip.map(b => `${b.selection} (${b.match})`).join(' + '),
-                competition: betslip.map(b => b.league).join(' / '),
-                market: betslip.map(b => b.selection).join(' + '),
-                odds: parseFloat(combinedOdds.toFixed(2)),
-                stake: stake,
-                confidence: 'medium',
-                notes: notes,
+                selection: slip.map(s => s.selection).join(' + '),
+                competition: [...new Set(slip.map(s => s.league))].join(' / '),
+                odds: parseFloat(combOdds.toFixed(2)),
+                stake,
                 status: 'pending'
             };
-            
-            challengeData.pendingBets.push(bet);
+
+            data.pendingBets.push(bet);
             saveData();
-            
-            // Clear betslip
-            betslip = [];
-            document.getElementById('betslipNotes').value = '';
-            updateBetslip();
-            toggleBetslip();
+
+            slip = [];
+            updateSlip();
+            toggleSlip();
             updateUI();
-            applyFilters();
+            renderFixtures();
             
-            showNotification(`${bet.type.charAt(0).toUpperCase() + bet.type.slice(1)} bet placed!`, 'success');
+            notify(`${bet.type.charAt(0).toUpperCase() + bet.type.slice(1)} placed @ ${bet.odds.toFixed(2)}!`, 'success');
         }
+
+        // ============================================================
+        // RESULTS
+        // ============================================================
         
-        // ==================== BET MANAGEMENT ====================
-        
-        let selectedBetId = null;
-        
-        function openResultModal(id) {
+        function openModal(id) {
             selectedBetId = id;
-            const bet = challengeData.pendingBets.find(b => b.id === id);
+            const bet = data.pendingBets.find(b => b.id === id);
             if (!bet) return;
-            
-            let legsHtml = '';
-            if (bet.legs && bet.legs.length > 0) {
-                legsHtml = bet.legs.map(l => `
-                    <div style="background:var(--bg-tertiary);padding:6px;border-radius:4px;margin-bottom:4px">
-                        <div style="font-size:0.7rem;color:var(--text-secondary)">${l.match}</div>
-                        <div style="font-size:0.8rem;font-weight:600">${l.selection} @ ${l.odds.toFixed(2)}</div>
-                    </div>
-                `).join('');
-            } else {
-                legsHtml = `<div style="font-size:0.85rem;font-weight:600">${bet.selection}</div>`;
-            }
-            
-            document.getElementById('modalBetDetails').innerHTML = `
+
+            const legs = bet.legs?.map(l => `
+                <div style="padding:6px 0; border-bottom:1px solid var(--border-color)">
+                    <div style="font-size:0.7rem; color:var(--text-secondary)">${l.match}</div>
+                    <div style="font-size:0.85rem; font-weight:600">${l.selection} @ <span class="green">${l.odds.toFixed(2)}</span></div>
+                </div>
+            `).join('') || `<div style="font-size:0.85rem">${bet.selection}</div>`;
+
+            document.getElementById('modalDetails').innerHTML = `
                 <div style="margin-bottom:12px">
-                    <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px">
                         <span class="badge badge-pending">${bet.type}</span>
-                        <span style="font-size:0.75rem;color:var(--text-secondary)">${bet.date}</span>
+                        <span style="font-size:0.7rem; color:var(--text-secondary)">${bet.date}</span>
                     </div>
-                    ${legsHtml}
-                    <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:0.8rem">
+                    ${legs}
+                    <div style="margin-top:12px; display:flex; justify-content:space-between; font-size:0.85rem">
                         <span>Combined Odds: <strong class="green">${bet.odds.toFixed(2)}</strong></span>
                         <span>Stake: <strong>£${bet.stake.toFixed(2)}</strong></span>
                     </div>
-                    <div style="text-align:right;margin-top:4px;font-size:0.85rem">
-                        Returns: <strong class="green">£${(bet.stake * bet.odds).toFixed(2)}</strong>
+                    <div style="text-align:right; font-size:0.95rem; margin-top:6px">
+                        Potential Returns: <strong class="green">£${(bet.stake * bet.odds).toFixed(2)}</strong>
                     </div>
                 </div>
             `;
-            
+
             document.getElementById('finalScore').value = '';
-            document.getElementById('resultModal').classList.add('active');
+            document.getElementById('resultModal').classList.add('open');
         }
-        
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
+
+        function closeModal() {
+            document.getElementById('resultModal').classList.remove('open');
             selectedBetId = null;
         }
-        
+
         function recordResult(result) {
-            const idx = challengeData.pendingBets.findIndex(b => b.id === selectedBetId);
+            const idx = data.pendingBets.findIndex(b => b.id === selectedBetId);
             if (idx === -1) return;
-            
-            const bet = challengeData.pendingBets[idx];
+
+            const bet = data.pendingBets[idx];
             bet.status = result;
             bet.finalScore = document.getElementById('finalScore').value;
-            bet.day = challengeData.bets.length + 1;
-            
+            bet.day = data.bets.length + 1;
+
             if (result === 'won') {
                 bet.returns = bet.stake * bet.odds;
-                challengeData.currentBalance = bet.returns;
+                data.currentBalance = bet.returns;
             } else if (result === 'void') {
                 bet.returns = bet.stake;
+                // Balance stays same for void
             } else {
                 bet.returns = 0;
-                challengeData.currentBalance = 0;
+                data.currentBalance = 0;
             }
-            
-            bet.balanceAfter = challengeData.currentBalance;
-            bet.targetForDay = INITIAL_BALANCE * Math.pow(DAILY_MULTIPLIER, bet.day);
+
+            bet.balanceAfter = data.currentBalance;
+            bet.targetForDay = INITIAL * Math.pow(MULT, bet.day);
             bet.vsTarget = bet.balanceAfter - bet.targetForDay;
-            
-            challengeData.bets.push(bet);
-            challengeData.pendingBets.splice(idx, 1);
+
+            data.bets.push(bet);
+            data.pendingBets.splice(idx, 1);
             
             saveData();
-            closeModal('resultModal');
+            closeModal();
             updateUI();
-            
+
             if (result === 'won') {
-                showNotification(`🎉 Won! Balance: £${challengeData.currentBalance.toFixed(2)}`, 'success');
+                notify(`🎉 Won! New balance: £${data.currentBalance.toFixed(2)}`, 'success');
+                if (data.currentBalance >= FINAL) {
+                    setTimeout(() => notify('🏆 CHALLENGE COMPLETE! Amazing!', 'success'), 1500);
+                }
             } else if (result === 'void') {
-                showNotification('Bet voided', 'info');
+                notify('Bet voided - stake returned', 'info');
             } else {
-                showNotification('❌ Challenge ended', 'error');
+                notify('❌ Challenge ended. Better luck next time!', 'error');
             }
         }
-        
-        function cancelPendingBet(id) {
-            if (confirm('Cancel?')) {
-                challengeData.pendingBets = challengeData.pendingBets.filter(b => b.id !== id);
+
+        function cancelBet(id) {
+            if (confirm('Cancel this pending bet?')) {
+                data.pendingBets = data.pendingBets.filter(b => b.id !== id);
                 saveData();
                 updateUI();
+                notify('Bet cancelled', 'success');
             }
         }
-        
-        // ==================== UI UPDATES ====================
+
+        // ============================================================
+        // UI UPDATES
+        // ============================================================
         
         function updateUI() {
             updateHeader();
             updateQuickStats();
             updateProgress();
-            updatePendingBets();
+            updatePending();
             updateHistory();
             updateChart();
-            updateBetslip();
+            updateSlip();
         }
-        
+
         function updateHeader() {
-            document.getElementById('currentDay').textContent = `Day ${Math.min(challengeData.bets.length + 1, TARGET_DAYS)}`;
-            document.getElementById('currentBalance').textContent = `£${challengeData.currentBalance.toFixed(0)}`;
+            document.getElementById('hDay').textContent = `Day ${Math.min(data.bets.length + 1, DAYS)}`;
+            document.getElementById('hBalance').textContent = `£${data.currentBalance.toFixed(0)}`;
             
-            const wins = challengeData.bets.filter(b => b.status === 'won').length;
-            const total = challengeData.bets.filter(b => b.status !== 'void').length;
-            document.getElementById('winRate').textContent = `${total ? ((wins / total) * 100).toFixed(0) : 0}%`;
+            const wins = data.bets.filter(b => b.status === 'won').length;
+            const total = data.bets.filter(b => b.status !== 'void').length;
+            document.getElementById('hWinRate').textContent = `${total ? Math.round(wins / total * 100) : 0}%`;
             
-            const active = challengeData.currentBalance > 0 && challengeData.bets.length < TARGET_DAYS;
-            const complete = challengeData.currentBalance >= FINAL_TARGET;
-            document.getElementById('challengeStatus').textContent = complete ? '🏆' : active ? '🟢' : '🔴';
+            const active = data.currentBalance > 0 && data.bets.length < DAYS;
+            const complete = data.currentBalance >= FINAL;
+            document.getElementById('hStatus').textContent = complete ? '🏆' : active ? '🟢' : '🔴';
         }
-        
+
         function updateQuickStats() {
-            const profit = challengeData.currentBalance - INITIAL_BALANCE;
-            document.getElementById('totalProfit').textContent = `£${profit.toFixed(0)}`;
-            document.getElementById('totalProfit').className = `quick-stat-value ${profit >= 0 ? 'green' : 'red'}`;
+            const profit = data.currentBalance - INITIAL;
+            document.getElementById('qProfit').textContent = `£${profit.toFixed(0)}`;
+            document.getElementById('qProfit').className = `quick-stat-value ${profit >= 0 ? 'green' : 'red'}`;
             
-            const nextTarget = INITIAL_BALANCE * Math.pow(DAILY_MULTIPLIER, challengeData.bets.length + 1);
-            document.getElementById('targetToday').textContent = `£${nextTarget.toFixed(0)}`;
+            const nextTarget = INITIAL * Math.pow(MULT, data.bets.length + 1);
+            document.getElementById('qTarget').textContent = `£${nextTarget.toFixed(0)}`;
             
-            const currentTarget = INITIAL_BALANCE * Math.pow(DAILY_MULTIPLIER, Math.max(challengeData.bets.length, 1));
-            const ahead = challengeData.bets.length && challengeData.currentBalance > 0 
-                ? Math.log(challengeData.currentBalance / currentTarget) / Math.log(DAILY_MULTIPLIER) 
+            const currentTarget = INITIAL * Math.pow(MULT, Math.max(data.bets.length, 1));
+            const ahead = data.bets.length && data.currentBalance > 0
+                ? Math.log(data.currentBalance / currentTarget) / Math.log(MULT)
                 : 0;
-            document.getElementById('daysAhead').textContent = ahead.toFixed(1);
-            document.getElementById('daysAhead').className = `quick-stat-value ${ahead >= 0 ? 'green' : 'red'}`;
+            document.getElementById('qAhead').textContent = ahead >= 0 ? `+${ahead.toFixed(1)}` : ahead.toFixed(1);
+            document.getElementById('qAhead').className = `quick-stat-value ${ahead >= 0 ? 'green' : 'red'}`;
             
-            const avgOdds = challengeData.bets.length 
-                ? (challengeData.bets.reduce((s, b) => s + b.odds, 0) / challengeData.bets.length).toFixed(2) 
+            const avgOdds = data.bets.length
+                ? (data.bets.reduce((a, b) => a + b.odds, 0) / data.bets.length).toFixed(2)
                 : '1.20';
-            document.getElementById('avgOdds').textContent = avgOdds;
+            document.getElementById('qAvgOdds').textContent = avgOdds;
             
-            document.getElementById('remainingDays').textContent = Math.max(0, TARGET_DAYS - challengeData.bets.length);
+            document.getElementById('qLeft').textContent = Math.max(0, DAYS - data.bets.length);
             
-            const roi = ((challengeData.currentBalance - INITIAL_BALANCE) / INITIAL_BALANCE * 100).toFixed(1);
-            document.getElementById('roiDisplay').textContent = `${roi}%`;
+            const roi = ((data.currentBalance - INITIAL) / INITIAL * 100).toFixed(0);
+            document.getElementById('qROI').textContent = `${roi}%`;
         }
-        
+
         function updateProgress() {
-            const pct = (challengeData.currentBalance / FINAL_TARGET) * 100;
+            const pct = (data.currentBalance / FINAL) * 100;
             document.getElementById('progressFill').style.width = `${Math.max(pct, 2)}%`;
             document.getElementById('progressFill').textContent = `${pct.toFixed(1)}%`;
-            
+
             let streak = '';
-            for (let i = 1; i <= TARGET_DAYS; i++) {
-                const bet = challengeData.bets.find(b => b.day === i);
+            for (let i = 1; i <= DAYS; i++) {
+                const bet = data.bets.find(b => b.day === i);
                 let cls = 'streak-day streak-pending';
-                if (bet) cls = `streak-day streak-${bet.status === 'won' ? 'won' : bet.status === 'void' ? 'void' : 'lost'}`;
-                if (i === challengeData.bets.length + 1) cls += ' streak-current';
+                if (bet) {
+                    cls = `streak-day streak-${bet.status === 'won' ? 'won' : bet.status === 'void' ? 'void' : 'lost'}`;
+                }
+                if (i === data.bets.length + 1) cls += ' streak-current';
                 streak += `<div class="${cls}">${i}</div>`;
             }
-            document.getElementById('streakDisplay').innerHTML = streak;
+            document.getElementById('streak').innerHTML = streak;
+
+            document.getElementById('mWins').textContent = data.bets.filter(b => b.status === 'won').length;
+            document.getElementById('mLosses').textContent = data.bets.filter(b => b.status === 'lost').length;
             
-            document.getElementById('winCount').textContent = challengeData.bets.filter(b => b.status === 'won').length;
-            document.getElementById('lossCount').textContent = challengeData.bets.filter(b => b.status === 'lost').length;
+            const wonBets = data.bets.filter(b => b.status === 'won');
+            document.getElementById('mBest').textContent = wonBets.length
+                ? `Day ${wonBets.reduce((a, b) => (b.returns - b.stake) > (a.returns - a.stake) ? b : a).day}`
+                : '-';
             
-            const won = challengeData.bets.filter(b => b.status === 'won');
-            document.getElementById('bestDay').textContent = won.length ? `Day ${won.reduce((b, c) => (c.returns - c.stake) > (b.returns - b.stake) ? c : b).day}` : '-';
-            
-            let winStreak = 0;
-            for (let i = challengeData.bets.length - 1; i >= 0; i--) {
-                if (challengeData.bets[i].status === 'won') winStreak++;
+            let ws = 0;
+            for (let i = data.bets.length - 1; i >= 0; i--) {
+                if (data.bets[i].status === 'won') ws++;
                 else break;
             }
-            document.getElementById('currentStreak').textContent = winStreak;
+            document.getElementById('mStreak').textContent = ws;
         }
-        
-        function updatePendingBets() {
-            const c = document.getElementById('pendingBets');
+
+        function updatePending() {
+            const cont = document.getElementById('pending');
             
-            if (!challengeData.pendingBets.length) {
-                c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>No pending bets</p></div>';
+            if (!data.pendingBets.length) {
+                cont.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><p>No pending bets</p></div>';
                 return;
             }
             
-            c.innerHTML = challengeData.pendingBets.map(b => {
-                let legsHtml = '';
-                if (b.legs && b.legs.length > 0) {
-                    legsHtml = b.legs.map(l => `
-                        <div style="font-size:0.7rem;padding:3px 0;border-bottom:1px solid var(--border-color)">
-                            ${l.selection} <span style="color:var(--accent-green)">@ ${l.odds.toFixed(2)}</span>
-                            <span style="color:var(--text-secondary);display:block;font-size:0.6rem">${l.match}</span>
-                        </div>
-                    `).join('');
-                }
+            cont.innerHTML = data.pendingBets.map(b => {
+                const legs = b.legs?.map(l => `
+                    <div class="pending-leg">
+                        <strong>${l.selection}</strong> @ <span class="green">${l.odds.toFixed(2)}</span>
+                        <br><span style="color:var(--text-secondary); font-size:0.6rem">${l.match}</span>
+                    </div>
+                `).join('') || `<div class="pending-leg">${b.selection}</div>`;
                 
                 return `
-                    <div style="background:var(--bg-tertiary);border-radius:8px;padding:10px;margin-bottom:8px">
-                        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                    <div class="pending-bet">
+                        <div class="pending-header">
                             <span class="badge badge-pending">${b.type}</span>
-                            <span style="font-size:0.7rem;color:var(--text-secondary)">${b.date}</span>
+                            <span style="font-size:0.65rem; color:var(--text-secondary)">${b.date}</span>
                         </div>
-                        ${legsHtml || `<div style="font-size:0.8rem;font-weight:600;margin-bottom:6px">${b.selection}</div>`}
-                        <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:0.75rem">
+                        <div class="pending-legs">${legs}</div>
+                        <div class="pending-summary">
                             <span>@ <strong class="green">${b.odds.toFixed(2)}</strong></span>
                             <span>£${b.stake.toFixed(2)} → <strong class="green">£${(b.stake * b.odds).toFixed(2)}</strong></span>
                         </div>
                         <div class="btn-group">
-                            <button class="btn btn-sm btn-success" onclick="openResultModal(${b.id})">Result</button>
-                            <button class="btn btn-sm btn-secondary" onclick="cancelPendingBet(${b.id})">Cancel</button>
+                            <button class="btn btn-sm btn-success" onclick="openModal(${b.id})">✅ Result</button>
+                            <button class="btn btn-sm btn-secondary" onclick="cancelBet(${b.id})">❌ Cancel</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
-        
+
         function updateHistory() {
-            const tb = document.getElementById('historyTable');
+            const cont = document.getElementById('history');
             
-            if (!challengeData.bets.length) {
-                tb.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-secondary)">No bets yet</td></tr>';
+            if (!data.bets.length) {
+                cont.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--text-secondary); padding:20px">No bets recorded yet</td></tr>';
                 return;
             }
             
-            tb.innerHTML = challengeData.bets.map(b => `
+            cont.innerHTML = data.bets.map(b => `
                 <tr>
-                    <td>${b.day}</td>
+                    <td><strong>${b.day}</strong></td>
                     <td>${b.date}</td>
-                    <td title="${b.selection}">${b.selection.substring(0, 20)}...</td>
+                    <td title="${b.selection}">${b.selection.length > 30 ? b.selection.substring(0, 30) + '...' : b.selection}</td>
                     <td>${b.type}</td>
-                    <td>${b.odds.toFixed(2)}</td>
+                    <td><strong>${b.odds.toFixed(2)}</strong></td>
                     <td>£${b.stake.toFixed(0)}</td>
-                    <td><span class="badge badge-${b.status}">${b.status === 'won' ? '✅' : b.status === 'void' ? '⚪' : '❌'}</span></td>
+                    <td><span class="badge badge-${b.status}">${b.status === 'won' ? '✅ Won' : b.status === 'void' ? '⚪ Void' : '❌ Lost'}</span></td>
                     <td class="${b.returns > b.stake ? 'green' : 'red'}">£${b.returns.toFixed(0)}</td>
-                    <td>£${b.balanceAfter.toFixed(0)}</td>
+                    <td><strong>£${b.balanceAfter.toFixed(0)}</strong></td>
                 </tr>
             `).join('');
         }
-        
+
         function updateChart() {
-            const ctx = document.getElementById('balanceChart');
+            const ctx = document.getElementById('chart');
             if (!ctx) return;
-            if (window.chartInstance) window.chartInstance.destroy();
-            
-            const actual = [{ x: 0, y: INITIAL_BALANCE }];
-            challengeData.bets.forEach(b => actual.push({ x: b.day, y: b.balanceAfter }));
-            
+            if (window.myChart) window.myChart.destroy();
+
+            const actual = [{ x: 0, y: INITIAL }];
+            data.bets.forEach(b => actual.push({ x: b.day, y: b.balanceAfter }));
+
             const target = [];
-            for (let i = 0; i <= TARGET_DAYS; i++) {
-                target.push({ x: i, y: INITIAL_BALANCE * Math.pow(DAILY_MULTIPLIER, i) });
+            for (let i = 0; i <= DAYS; i++) {
+                target.push({ x: i, y: INITIAL * Math.pow(MULT, i) });
             }
-            
-            window.chartInstance = new Chart(ctx, {
+
+            window.myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     datasets: [
-                        { label: 'Actual', data: actual, borderColor: '#00d4aa', backgroundColor: 'rgba(0,212,170,0.1)', fill: true, tension: 0.4, pointRadius: 3 },
-                        { label: 'Target', data: target, borderColor: '#54a0ff', borderDash: [5, 5], fill: false, tension: 0.4, pointRadius: 0 }
+                        {
+                            label: 'Your Balance',
+                            data: actual,
+                            borderColor: '#00d4aa',
+                            backgroundColor: 'rgba(0, 212, 170, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#00d4aa'
+                        },
+                        {
+                            label: 'Target',
+                            data: target,
+                            borderColor: '#54a0ff',
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0
+                        }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#b0b0c0', font: { size: 9 } } } },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#b0b0c0',
+                                font: { size: 9 }
+                            }
+                        }
+                    },
                     scales: {
-                        x: { type: 'linear', ticks: { color: '#b0b0c0', font: { size: 8 } }, grid: { color: '#333355' }, min: 0, max: TARGET_DAYS },
-                        y: { ticks: { color: '#b0b0c0', font: { size: 8 }, callback: v => v >= 1000 ? (v/1000).toFixed(1) + 'k' : v }, grid: { color: '#333355' }, min: 0 }
+                        x: {
+                            type: 'linear',
+                            min: 0,
+                            max: DAYS,
+                            ticks: {
+                                color: '#b0b0c0',
+                                font: { size: 8 },
+                                stepSize: 3
+                            },
+                            grid: { color: '#333355' }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#b0b0c0',
+                                font: { size: 8 },
+                                callback: v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v
+                            },
+                            grid: { color: '#333355' },
+                            min: 0
+                        }
                     }
                 }
             });
         }
+
+        // ============================================================
+        // INITIALIZATION
+        // ============================================================
         
-        // ==================== INIT ====================
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set default date filter to today
-            document.getElementById('filterDate').value = new Date().toISOString().split('T')[0];
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🎯 21-Day Betting Challenge starting...');
+            log('Current date: ' + new Date().toISOString());
             
-            // Load local data first
+            // Load saved data first
             loadData();
             
-            // Initialize Firebase
+            // Initialize Firebase for cloud sync
             initFirebase();
             
-            // Fetch fixtures
-            fetchFixtures();
+            // Load fixtures
+            loadFixtures();
             
             // Set default stake
-            document.getElementById('betslipStake').value = challengeData.currentBalance.toFixed(2);
+            document.getElementById('slipStake').value = data.currentBalance.toFixed(2);
+            
+            log('✅ App initialized successfully');
+            log(`📊 Day ${data.bets.length + 1} | Balance: £${data.currentBalance.toFixed(2)} | Win Rate: ${data.bets.length ? Math.round(data.bets.filter(b => b.status === 'won').length / data.bets.length * 100) : 0}%`);
         });
     </script>
 </body>
