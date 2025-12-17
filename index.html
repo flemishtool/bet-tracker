@@ -972,16 +972,19 @@
     <script>
         // ==================== CONFIGURATION ====================
         
-        // Firebase Config - REPLACE WITH YOUR OWN
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-            projectId: "YOUR_PROJECT",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
+        // Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyD-MH_oSRLM53UHe2sPB4bXRjsEcXEm9IM",
+  authDomain: "bet-tracker-d819b.firebaseapp.com",
+  databaseURL: "https://bet-tracker-d819b-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "bet-tracker-d819b",
+  storageBucket: "bet-tracker-d819b.firebasestorage.app",
+  messagingSenderId: "556598232550",
+  appId: "1:556598232550:web:2921e82966b16bf7520227"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
         
         // API-Football Config
         const API_KEY = '89d2f65b7dc64f8d0fce8468e2a8af2b';
