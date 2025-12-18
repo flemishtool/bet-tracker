@@ -552,12 +552,21 @@
         }
 
         .odds-grid.grid-5 {
-            grid-template-columns: repeat(5, 1fr);
-        }
+    grid-template-columns: repeat(5, 1fr);
+}
 
-        .odds-grid.grid-6 {
-            grid-template-columns: repeat(6, 1fr);
-        }
+.odds-grid.grid-6 {
+    grid-template-columns: repeat(6, 1fr);
+}
+
+@media (max-width: 500px) {
+    .odds-grid.grid-5 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .odds-grid.grid-6 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
 
         .odd-btn {
             background: var(--bg-secondary);
@@ -2109,11 +2118,184 @@ const LEAGUES = {
 const FETCH_LEAGUES = [39, 140, 78, 135, 61, 48, 45, 143, 81, 137, 2, 3, 848, 40, 94, 88, 144, 203, 179, 307, 66];
 
 const MARKET_TYPES = {
-    home: 'Home Win', draw: 'Draw', away: 'Away Win',
-    homeOrDraw: '1X', awayOrDraw: 'X2', homeOrAway: '12',
-    over05: 'Over 0.5', over15: 'Over 1.5', over25: 'Over 2.5', over35: 'Over 3.5', over45: 'Over 4.5',
-    under05: 'Under 0.5', under15: 'Under 1.5', under25: 'Under 2.5', under35: 'Under 3.5', under45: 'Under 4.5',
-    bttsYes: 'BTTS Yes', bttsNo: 'BTTS No'
+    // Match Result
+    home: 'Home Win',
+    draw: 'Draw',
+    away: 'Away Win',
+    
+    // Double Chance
+    homeOrDraw: '1X',
+    awayOrDraw: 'X2',
+    homeOrAway: '12',
+    
+    // Draw No Bet
+    dnbHome: 'DNB Home',
+    dnbAway: 'DNB Away',
+    
+    // Goals Over/Under (Full Time)
+    over05: 'Over 0.5',
+    over15: 'Over 1.5',
+    over25: 'Over 2.5',
+    over35: 'Over 3.5',
+    over45: 'Over 4.5',
+    over55: 'Over 5.5',
+    under05: 'Under 0.5',
+    under15: 'Under 1.5',
+    under25: 'Under 2.5',
+    under35: 'Under 3.5',
+    under45: 'Under 4.5',
+    under55: 'Under 5.5',
+    
+    // Goals Over/Under (First Half)
+    over05FH: 'O0.5 1H',
+    over15FH: 'O1.5 1H',
+    over25FH: 'O2.5 1H',
+    under05FH: 'U0.5 1H',
+    under15FH: 'U1.5 1H',
+    under25FH: 'U2.5 1H',
+    
+    // Goals Over/Under (Second Half)
+    over05SH: 'O0.5 2H',
+    over15SH: 'O1.5 2H',
+    over25SH: 'O2.5 2H',
+    under05SH: 'U0.5 2H',
+    under15SH: 'U1.5 2H',
+    under25SH: 'U2.5 2H',
+    
+    // Both Teams to Score
+    bttsYes: 'BTTS Yes',
+    bttsNo: 'BTTS No',
+    bttsFHYes: 'BTTS 1H Yes',
+    bttsFHNo: 'BTTS 1H No',
+    bttsSHYes: 'BTTS 2H Yes',
+    bttsSHNo: 'BTTS 2H No',
+    
+    // Half Time Result
+    htHome: 'HT Home',
+    htDraw: 'HT Draw',
+    htAway: 'HT Away',
+    
+    // Second Half Winner
+    shHome: '2H Home',
+    shDraw: '2H Draw',
+    shAway: '2H Away',
+    
+    // Asian Handicap
+    ahHome_minus05: 'AH Home -0.5',
+    ahHome_minus1: 'AH Home -1',
+    ahHome_minus15: 'AH Home -1.5',
+    ahHome_minus2: 'AH Home -2',
+    ahHome_minus25: 'AH Home -2.5',
+    ahHome_plus05: 'AH Home +0.5',
+    ahHome_plus1: 'AH Home +1',
+    ahHome_plus15: 'AH Home +1.5',
+    ahHome_plus2: 'AH Home +2',
+    ahAway_minus05: 'AH Away -0.5',
+    ahAway_minus1: 'AH Away -1',
+    ahAway_minus15: 'AH Away -1.5',
+    ahAway_minus2: 'AH Away -2',
+    ahAway_minus25: 'AH Away -2.5',
+    ahAway_plus05: 'AH Away +0.5',
+    ahAway_plus1: 'AH Away +1',
+    ahAway_plus15: 'AH Away +1.5',
+    ahAway_plus2: 'AH Away +2',
+    
+    // Goal Line (Asian Total)
+    gl_over15: 'GL O1.5',
+    gl_under15: 'GL U1.5',
+    gl_over25: 'GL O2.5',
+    gl_under25: 'GL U2.5',
+    gl_over35: 'GL O3.5',
+    gl_under35: 'GL U3.5',
+    
+    // Odd/Even
+    goalsOdd: 'Goals Odd',
+    goalsEven: 'Goals Even',
+    
+    // Home Team Goals
+    homeOver05: 'Home O0.5',
+    homeOver15: 'Home O1.5',
+    homeOver25: 'Home O2.5',
+    homeUnder05: 'Home U0.5',
+    homeUnder15: 'Home U1.5',
+    homeUnder25: 'Home U2.5',
+    
+    // Away Team Goals
+    awayOver05: 'Away O0.5',
+    awayOver15: 'Away O1.5',
+    awayOver25: 'Away O2.5',
+    awayUnder05: 'Away U0.5',
+    awayUnder15: 'Away U1.5',
+    awayUnder25: 'Away U2.5',
+    
+    // Clean Sheet
+    csHome: 'Home CS',
+    csAway: 'Away CS',
+    noCSHome: 'Home No CS',
+    noCSAway: 'Away No CS',
+    
+    // Win to Nil
+    wtnHome: 'Home WTN',
+    wtnAway: 'Away WTN',
+    
+    // Score in Both Halves
+    homeScoreBoth: 'Home Score Both',
+    awayScoreBoth: 'Away Score Both',
+    
+    // Win Either Half
+    homeWinEither: 'Home Win Either',
+    awayWinEither: 'Away Win Either',
+    
+    // Corners Over/Under
+    cornersOver75: 'Corners O7.5',
+    cornersOver85: 'Corners O8.5',
+    cornersOver95: 'Corners O9.5',
+    cornersOver105: 'Corners O10.5',
+    cornersUnder75: 'Corners U7.5',
+    cornersUnder85: 'Corners U8.5',
+    cornersUnder95: 'Corners U9.5',
+    cornersUnder105: 'Corners U10.5',
+    
+    // Cards
+    cardsOver25: 'Cards O2.5',
+    cardsOver35: 'Cards O3.5',
+    cardsOver45: 'Cards O4.5',
+    cardsUnder25: 'Cards U2.5',
+    cardsUnder35: 'Cards U3.5',
+    cardsUnder45: 'Cards U4.5',
+    
+    // HT/FT
+    htft_1_1: 'HT/FT 1/1',
+    htft_1_X: 'HT/FT 1/X',
+    htft_1_2: 'HT/FT 1/2',
+    htft_X_1: 'HT/FT X/1',
+    htft_X_X: 'HT/FT X/X',
+    htft_X_2: 'HT/FT X/2',
+    htft_2_1: 'HT/FT 2/1',
+    htft_2_X: 'HT/FT 2/X',
+    htft_2_2: 'HT/FT 2/2',
+    
+    // Exact Goals
+    exactGoals0: 'Exact 0 Goals',
+    exactGoals1: 'Exact 1 Goal',
+    exactGoals2: 'Exact 2 Goals',
+    exactGoals3: 'Exact 3 Goals',
+    exactGoals4plus: 'Exact 4+ Goals',
+    
+    // Result & BTTS
+    homeAndBttsYes: 'Home & BTTS Yes',
+    homeAndBttsNo: 'Home & BTTS No',
+    drawAndBttsYes: 'Draw & BTTS Yes',
+    awayAndBttsYes: 'Away & BTTS Yes',
+    awayAndBttsNo: 'Away & BTTS No',
+    
+    // Result & Over/Under
+    homeAndOver15: 'Home & O1.5',
+    homeAndOver25: 'Home & O2.5',
+    drawAndOver15: 'Draw & O1.5',
+    drawAndOver25: 'Draw & O2.5',
+    awayAndOver15: 'Away & O1.5',
+    awayAndOver25: 'Away & O2.5'
 };
 
 const PREFERRED_BOOKMAKERS = ['Coral', 'Bet365', 'Ladbrokes', 'William Hill', 'Paddy Power', 'Betfair', 'Pinnacle', '1xBet'];
@@ -2533,16 +2715,102 @@ async function loadAllOdds() {
 
 function parseOdds(oddsData) {
     const result = {
+        // Match Result
         home: null, draw: null, away: null,
+        
+        // Double Chance
         homeOrDraw: null, awayOrDraw: null, homeOrAway: null,
-        over05: null, over15: null, over25: null, over35: null, over45: null,
-        under05: null, under15: null, under25: null, under35: null, under45: null,
+        
+        // Draw No Bet
+        dnbHome: null, dnbAway: null,
+        
+        // Goals Over/Under Full Time
+        over05: null, over15: null, over25: null, over35: null, over45: null, over55: null,
+        under05: null, under15: null, under25: null, under35: null, under45: null, under55: null,
+        
+        // Goals Over/Under First Half
+        over05FH: null, over15FH: null, over25FH: null,
+        under05FH: null, under15FH: null, under25FH: null,
+        
+        // Goals Over/Under Second Half
+        over05SH: null, over15SH: null, over25SH: null,
+        under05SH: null, under15SH: null, under25SH: null,
+        
+        // BTTS
         bttsYes: null, bttsNo: null,
+        bttsFHYes: null, bttsFHNo: null,
+        bttsSHYes: null, bttsSHNo: null,
+        
+        // Half Time Result
+        htHome: null, htDraw: null, htAway: null,
+        
+        // Second Half Winner
+        shHome: null, shDraw: null, shAway: null,
+        
+        // Asian Handicap
+        ahHome_minus05: null, ahHome_minus1: null, ahHome_minus15: null, ahHome_minus2: null, ahHome_minus25: null,
+        ahHome_plus05: null, ahHome_plus1: null, ahHome_plus15: null, ahHome_plus2: null,
+        ahAway_minus05: null, ahAway_minus1: null, ahAway_minus15: null, ahAway_minus2: null, ahAway_minus25: null,
+        ahAway_plus05: null, ahAway_plus1: null, ahAway_plus15: null, ahAway_plus2: null,
+        
+        // Goal Line
+        gl_over15: null, gl_under15: null, gl_over25: null, gl_under25: null, gl_over35: null, gl_under35: null,
+        
+        // Odd/Even
+        goalsOdd: null, goalsEven: null,
+        
+        // Home Team Goals
+        homeOver05: null, homeOver15: null, homeOver25: null,
+        homeUnder05: null, homeUnder15: null, homeUnder25: null,
+        
+        // Away Team Goals
+        awayOver05: null, awayOver15: null, awayOver25: null,
+        awayUnder05: null, awayUnder15: null, awayUnder25: null,
+        
+        // Clean Sheet
+        csHome: null, csAway: null, noCSHome: null, noCSAway: null,
+        
+        // Win to Nil
+        wtnHome: null, wtnAway: null,
+        
+        // Score Both Halves
+        homeScoreBoth: null, awayScoreBoth: null,
+        
+        // Win Either Half
+        homeWinEither: null, awayWinEither: null,
+        
+        // Corners
+        cornersOver75: null, cornersOver85: null, cornersOver95: null, cornersOver105: null,
+        cornersUnder75: null, cornersUnder85: null, cornersUnder95: null, cornersUnder105: null,
+        
+        // Cards
+        cardsOver25: null, cardsOver35: null, cardsOver45: null,
+        cardsUnder25: null, cardsUnder35: null, cardsUnder45: null,
+        
+        // HT/FT
+        htft_1_1: null, htft_1_X: null, htft_1_2: null,
+        htft_X_1: null, htft_X_X: null, htft_X_2: null,
+        htft_2_1: null, htft_2_X: null, htft_2_2: null,
+        
+        // Exact Goals
+        exactGoals0: null, exactGoals1: null, exactGoals2: null, exactGoals3: null, exactGoals4plus: null,
+        
+        // Result & BTTS
+        homeAndBttsYes: null, homeAndBttsNo: null,
+        drawAndBttsYes: null,
+        awayAndBttsYes: null, awayAndBttsNo: null,
+        
+        // Result & Over/Under
+        homeAndOver15: null, homeAndOver25: null,
+        drawAndOver15: null, drawAndOver25: null,
+        awayAndOver15: null, awayAndOver25: null,
+        
         bookmaker: null
     };
 
     if (!oddsData || !oddsData.bookmakers || oddsData.bookmakers.length === 0) return result;
 
+    // Find preferred bookmaker
     let bookmaker = null;
     for (const pref of PREFERRED_BOOKMAKERS) {
         bookmaker = oddsData.bookmakers.find(b => b.name.toLowerCase().includes(pref.toLowerCase()));
@@ -2551,42 +2819,329 @@ function parseOdds(oddsData) {
     if (!bookmaker) bookmaker = oddsData.bookmakers[0];
     result.bookmaker = bookmaker.name;
 
+    // Parse all bets from bookmaker
     for (const bet of bookmaker.bets) {
-        if (bet.name === 'Match Winner') {
-            bet.values.forEach(v => {
+        const name = bet.name;
+        const values = bet.values;
+
+        // Match Winner (1X2)
+        if (name === 'Match Winner') {
+            values.forEach(v => {
                 if (v.value === 'Home') result.home = parseFloat(v.odd);
                 if (v.value === 'Draw') result.draw = parseFloat(v.odd);
                 if (v.value === 'Away') result.away = parseFloat(v.odd);
             });
         }
-        if (bet.name === 'Double Chance') {
-            bet.values.forEach(v => {
+
+        // Double Chance
+        if (name === 'Double Chance') {
+            values.forEach(v => {
                 if (v.value === 'Home/Draw') result.homeOrDraw = parseFloat(v.odd);
                 if (v.value === 'Away/Draw') result.awayOrDraw = parseFloat(v.odd);
                 if (v.value === 'Home/Away') result.homeOrAway = parseFloat(v.odd);
             });
         }
-        if (bet.name === 'Goals Over/Under') {
-            bet.values.forEach(v => {
+
+        // Draw No Bet
+        if (name === 'Draw No Bet') {
+            values.forEach(v => {
+                if (v.value === 'Home') result.dnbHome = parseFloat(v.odd);
+                if (v.value === 'Away') result.dnbAway = parseFloat(v.odd);
+            });
+        }
+
+        // Goals Over/Under (Full Time)
+        if (name === 'Goals Over/Under') {
+            values.forEach(v => {
                 if (v.value === 'Over 0.5') result.over05 = parseFloat(v.odd);
                 if (v.value === 'Over 1.5') result.over15 = parseFloat(v.odd);
                 if (v.value === 'Over 2.5') result.over25 = parseFloat(v.odd);
                 if (v.value === 'Over 3.5') result.over35 = parseFloat(v.odd);
                 if (v.value === 'Over 4.5') result.over45 = parseFloat(v.odd);
+                if (v.value === 'Over 5.5') result.over55 = parseFloat(v.odd);
                 if (v.value === 'Under 0.5') result.under05 = parseFloat(v.odd);
                 if (v.value === 'Under 1.5') result.under15 = parseFloat(v.odd);
                 if (v.value === 'Under 2.5') result.under25 = parseFloat(v.odd);
                 if (v.value === 'Under 3.5') result.under35 = parseFloat(v.odd);
                 if (v.value === 'Under 4.5') result.under45 = parseFloat(v.odd);
+                if (v.value === 'Under 5.5') result.under55 = parseFloat(v.odd);
             });
         }
-        if (bet.name === 'Both Teams Score') {
-            bet.values.forEach(v => {
+
+        // Goals Over/Under First Half
+        if (name === 'Goals Over/Under First Half') {
+            values.forEach(v => {
+                if (v.value === 'Over 0.5') result.over05FH = parseFloat(v.odd);
+                if (v.value === 'Over 1.5') result.over15FH = parseFloat(v.odd);
+                if (v.value === 'Over 2.5') result.over25FH = parseFloat(v.odd);
+                if (v.value === 'Under 0.5') result.under05FH = parseFloat(v.odd);
+                if (v.value === 'Under 1.5') result.under15FH = parseFloat(v.odd);
+                if (v.value === 'Under 2.5') result.under25FH = parseFloat(v.odd);
+            });
+        }
+
+        // Goals Over/Under Second Half
+        if (name === 'Goals Over/Under - Second Half') {
+            values.forEach(v => {
+                if (v.value === 'Over 0.5') result.over05SH = parseFloat(v.odd);
+                if (v.value === 'Over 1.5') result.over15SH = parseFloat(v.odd);
+                if (v.value === 'Over 2.5') result.over25SH = parseFloat(v.odd);
+                if (v.value === 'Under 0.5') result.under05SH = parseFloat(v.odd);
+                if (v.value === 'Under 1.5') result.under15SH = parseFloat(v.odd);
+                if (v.value === 'Under 2.5') result.under25SH = parseFloat(v.odd);
+            });
+        }
+
+        // Both Teams Score
+        if (name === 'Both Teams Score') {
+            values.forEach(v => {
                 if (v.value === 'Yes') result.bttsYes = parseFloat(v.odd);
                 if (v.value === 'No') result.bttsNo = parseFloat(v.odd);
             });
         }
+
+        // BTTS First Half
+        if (name === 'Both Teams Score - First Half') {
+            values.forEach(v => {
+                if (v.value === 'Yes') result.bttsFHYes = parseFloat(v.odd);
+                if (v.value === 'No') result.bttsFHNo = parseFloat(v.odd);
+            });
+        }
+
+        // BTTS Second Half
+        if (name === 'Both Teams Score - Second Half') {
+            values.forEach(v => {
+                if (v.value === 'Yes') result.bttsSHYes = parseFloat(v.odd);
+                if (v.value === 'No') result.bttsSHNo = parseFloat(v.odd);
+            });
+        }
+
+        // First Half Winner
+        if (name === 'First Half Winner') {
+            values.forEach(v => {
+                if (v.value === 'Home') result.htHome = parseFloat(v.odd);
+                if (v.value === 'Draw') result.htDraw = parseFloat(v.odd);
+                if (v.value === 'Away') result.htAway = parseFloat(v.odd);
+            });
+        }
+
+        // Second Half Winner
+        if (name === 'Second Half Winner') {
+            values.forEach(v => {
+                if (v.value === 'Home') result.shHome = parseFloat(v.odd);
+                if (v.value === 'Draw') result.shDraw = parseFloat(v.odd);
+                if (v.value === 'Away') result.shAway = parseFloat(v.odd);
+            });
+        }
+
+        // Asian Handicap
+        if (name === 'Asian Handicap') {
+            values.forEach(v => {
+                const val = v.value;
+                const odd = parseFloat(v.odd);
+                
+                // Home handicaps
+                if (val === 'Home -0.5') result.ahHome_minus05 = odd;
+                if (val === 'Home -1') result.ahHome_minus1 = odd;
+                if (val === 'Home -1.5') result.ahHome_minus15 = odd;
+                if (val === 'Home -2') result.ahHome_minus2 = odd;
+                if (val === 'Home -2.5') result.ahHome_minus25 = odd;
+                if (val === 'Home +0.5') result.ahHome_plus05 = odd;
+                if (val === 'Home +1') result.ahHome_plus1 = odd;
+                if (val === 'Home +1.5') result.ahHome_plus15 = odd;
+                if (val === 'Home +2') result.ahHome_plus2 = odd;
+                
+                // Away handicaps
+                if (val === 'Away -0.5') result.ahAway_minus05 = odd;
+                if (val === 'Away -1') result.ahAway_minus1 = odd;
+                if (val === 'Away -1.5') result.ahAway_minus15 = odd;
+                if (val === 'Away -2') result.ahAway_minus2 = odd;
+                if (val === 'Away -2.5') result.ahAway_minus25 = odd;
+                if (val === 'Away +0.5') result.ahAway_plus05 = odd;
+                if (val === 'Away +1') result.ahAway_plus1 = odd;
+                if (val === 'Away +1.5') result.ahAway_plus15 = odd;
+                if (val === 'Away +2') result.ahAway_plus2 = odd;
+            });
+        }
+
+        // Goal Line (Asian Total)
+        if (name === 'Goal Line') {
+            values.forEach(v => {
+                if (v.value === 'Over 1.5') result.gl_over15 = parseFloat(v.odd);
+                if (v.value === 'Under 1.5') result.gl_under15 = parseFloat(v.odd);
+                if (v.value === 'Over 2.5') result.gl_over25 = parseFloat(v.odd);
+                if (v.value === 'Under 2.5') result.gl_under25 = parseFloat(v.odd);
+                if (v.value === 'Over 3.5') result.gl_over35 = parseFloat(v.odd);
+                if (v.value === 'Under 3.5') result.gl_under35 = parseFloat(v.odd);
+            });
+        }
+
+        // Odd/Even
+        if (name === 'Odd/Even') {
+            values.forEach(v => {
+                if (v.value === 'Odd') result.goalsOdd = parseFloat(v.odd);
+                if (v.value === 'Even') result.goalsEven = parseFloat(v.odd);
+            });
+        }
+
+        // Total - Home
+        if (name === 'Total - Home') {
+            values.forEach(v => {
+                if (v.value === 'Over 0.5') result.homeOver05 = parseFloat(v.odd);
+                if (v.value === 'Over 1.5') result.homeOver15 = parseFloat(v.odd);
+                if (v.value === 'Over 2.5') result.homeOver25 = parseFloat(v.odd);
+                if (v.value === 'Under 0.5') result.homeUnder05 = parseFloat(v.odd);
+                if (v.value === 'Under 1.5') result.homeUnder15 = parseFloat(v.odd);
+                if (v.value === 'Under 2.5') result.homeUnder25 = parseFloat(v.odd);
+            });
+        }
+
+        // Total - Away
+        if (name === 'Total - Away') {
+            values.forEach(v => {
+                if (v.value === 'Over 0.5') result.awayOver05 = parseFloat(v.odd);
+                if (v.value === 'Over 1.5') result.awayOver15 = parseFloat(v.odd);
+                if (v.value === 'Over 2.5') result.awayOver25 = parseFloat(v.odd);
+                if (v.value === 'Under 0.5') result.awayUnder05 = parseFloat(v.odd);
+                if (v.value === 'Under 1.5') result.awayUnder15 = parseFloat(v.odd);
+                if (v.value === 'Under 2.5') result.awayUnder25 = parseFloat(v.odd);
+            });
+        }
+
+        // Clean Sheet - Home
+        if (name === 'Clean Sheet - Home') {
+            values.forEach(v => {
+                if (v.value === 'Yes') result.csHome = parseFloat(v.odd);
+                if (v.value === 'No') result.noCSHome = parseFloat(v.odd);
+            });
+        }
+
+        // Clean Sheet - Away
+        if (name === 'Clean Sheet - Away') {
+            values.forEach(v => {
+                if (v.value === 'Yes') result.csAway = parseFloat(v.odd);
+                if (v.value === 'No') result.noCSAway = parseFloat(v.odd);
+            });
+        }
+
+        // Win to Nil - Home
+        if (name === 'Win to Nil - Home') {
+            values.forEach(v => {
+                if (v.value === 'Yes') result.wtnHome = parseFloat(v.odd);
+            });
+        }
+
+        // Win to Nil - Away
+        if (name === 'Win to Nil - Away') {
+            values.forEach(v => {
+                if (v.value === 'Yes') result.wtnAway = parseFloat(v.odd);
+            });
+        }
+
+        // To Score In Both Halves - Home
+        if (name === 'Home Team Score a Goal in Both Halves') {
+            values.forEach(v => {
+                if (v.value === 'Yes') result.homeScoreBoth = parseFloat(v.odd);
+            });
+        }
+
+        // To Score In Both Halves - Away
+        if (name === 'Away Team Score a Goal in Both Halves') {
+            values.forEach(v => {
+                if (v.value === 'Yes') result.awayScoreBoth = parseFloat(v.odd);
+            });
+        }
+
+        // To Win Either Half - Home
+        if (name === 'To Win Either Half - Home') {
+            values.forEach(v => {
+                if (v.value === 'Yes') result.homeWinEither = parseFloat(v.odd);
+            });
+        }
+
+        // To Win Either Half - Away
+        if (name === 'To Win Either Half - Away') {
+            values.forEach(v => {
+                if (v.value === 'Yes') result.awayWinEither = parseFloat(v.odd);
+            });
+        }
+
+        // Corners Over/Under
+        if (name === 'Corners Over Under') {
+            values.forEach(v => {
+                if (v.value === 'Over 7.5') result.cornersOver75 = parseFloat(v.odd);
+                if (v.value === 'Over 8.5') result.cornersOver85 = parseFloat(v.odd);
+                if (v.value === 'Over 9.5') result.cornersOver95 = parseFloat(v.odd);
+                if (v.value === 'Over 10.5') result.cornersOver105 = parseFloat(v.odd);
+                if (v.value === 'Under 7.5') result.cornersUnder75 = parseFloat(v.odd);
+                if (v.value === 'Under 8.5') result.cornersUnder85 = parseFloat(v.odd);
+                if (v.value === 'Under 9.5') result.cornersUnder95 = parseFloat(v.odd);
+                if (v.value === 'Under 10.5') result.cornersUnder105 = parseFloat(v.odd);
+            });
+        }
+
+        // Total Cards
+        if (name === 'Total Cards') {
+            values.forEach(v => {
+                if (v.value === 'Over 2.5') result.cardsOver25 = parseFloat(v.odd);
+                if (v.value === 'Over 3.5') result.cardsOver35 = parseFloat(v.odd);
+                if (v.value === 'Over 4.5') result.cardsOver45 = parseFloat(v.odd);
+                if (v.value === 'Under 2.5') result.cardsUnder25 = parseFloat(v.odd);
+                if (v.value === 'Under 3.5') result.cardsUnder35 = parseFloat(v.odd);
+                if (v.value === 'Under 4.5') result.cardsUnder45 = parseFloat(v.odd);
+            });
+        }
+
+        // HT/FT
+        if (name === 'HT/FT Double') {
+            values.forEach(v => {
+                if (v.value === '1/1' || v.value === 'Home/Home') result.htft_1_1 = parseFloat(v.odd);
+                if (v.value === '1/X' || v.value === 'Home/Draw') result.htft_1_X = parseFloat(v.odd);
+                if (v.value === '1/2' || v.value === 'Home/Away') result.htft_1_2 = parseFloat(v.odd);
+                if (v.value === 'X/1' || v.value === 'Draw/Home') result.htft_X_1 = parseFloat(v.odd);
+                if (v.value === 'X/X' || v.value === 'Draw/Draw') result.htft_X_X = parseFloat(v.odd);
+                if (v.value === 'X/2' || v.value === 'Draw/Away') result.htft_X_2 = parseFloat(v.odd);
+                if (v.value === '2/1' || v.value === 'Away/Home') result.htft_2_1 = parseFloat(v.odd);
+                if (v.value === '2/X' || v.value === 'Away/Draw') result.htft_2_X = parseFloat(v.odd);
+                if (v.value === '2/2' || v.value === 'Away/Away') result.htft_2_2 = parseFloat(v.odd);
+            });
+        }
+
+        // Exact Goals
+        if (name === 'Exact Goals Number') {
+            values.forEach(v => {
+                if (v.value === '0') result.exactGoals0 = parseFloat(v.odd);
+                if (v.value === '1') result.exactGoals1 = parseFloat(v.odd);
+                if (v.value === '2') result.exactGoals2 = parseFloat(v.odd);
+                if (v.value === '3') result.exactGoals3 = parseFloat(v.odd);
+                if (v.value === '4+' || v.value === '4 or more') result.exactGoals4plus = parseFloat(v.odd);
+            });
+        }
+
+        // Results/Both Teams Score
+        if (name === 'Results/Both Teams Score' || name === 'Result/Both Teams to Score') {
+            values.forEach(v => {
+                if (v.value === 'Home/Yes') result.homeAndBttsYes = parseFloat(v.odd);
+                if (v.value === 'Home/No') result.homeAndBttsNo = parseFloat(v.odd);
+                if (v.value === 'Draw/Yes') result.drawAndBttsYes = parseFloat(v.odd);
+                if (v.value === 'Away/Yes') result.awayAndBttsYes = parseFloat(v.odd);
+                if (v.value === 'Away/No') result.awayAndBttsNo = parseFloat(v.odd);
+            });
+        }
+
+        // Result/Total Goals
+        if (name === 'Results/Total Goals' || name === 'Result/Total Goals') {
+            values.forEach(v => {
+                if (v.value === 'Home/Over 1.5') result.homeAndOver15 = parseFloat(v.odd);
+                if (v.value === 'Home/Over 2.5') result.homeAndOver25 = parseFloat(v.odd);
+                if (v.value === 'Draw/Over 1.5') result.drawAndOver15 = parseFloat(v.odd);
+                if (v.value === 'Draw/Over 2.5') result.drawAndOver25 = parseFloat(v.odd);
+                if (v.value === 'Away/Over 1.5') result.awayAndOver15 = parseFloat(v.odd);
+                if (v.value === 'Away/Over 2.5') result.awayAndOver25 = parseFloat(v.odd);
+            });
+        }
     }
+
     return result;
 }
 
@@ -2756,34 +3311,286 @@ function renderFixtures() {
 
 function renderOddsButtons(fixtureId, odds, home, away, league) {
     const isSelected = (market) => betslip.some(s => s.fixtureId === fixtureId && s.market === market);
+    
     const oddBtn = (market, label, value) => {
         if (!value) return '';
         const selected = isSelected(market) ? 'selected' : '';
         return `<div class="odd-btn ${selected}" onclick="toggleSelection(${fixtureId}, '${market}', '${home}', '${away}', ${value}, '${league}')"><div class="odd-label">${label}</div><div class="odd-value">${value.toFixed(2)}</div></div>`;
     };
 
-    let html = `<div class="odds-section"><div class="odds-section-title">Match Result</div><div class="odds-grid">${oddBtn('home', '1', odds.home)}${oddBtn('draw', 'X', odds.draw)}${oddBtn('away', '2', odds.away)}</div></div>`;
+    let html = '';
 
+    // ===== MATCH RESULT =====
+    if (odds.home || odds.draw || odds.away) {
+        html += `<div class="odds-section"><div class="odds-section-title">Match Result</div><div class="odds-grid">${oddBtn('home', '1', odds.home)}${oddBtn('draw', 'X', odds.draw)}${oddBtn('away', '2', odds.away)}</div></div>`;
+    }
+
+    // ===== DOUBLE CHANCE =====
     if (odds.homeOrDraw || odds.awayOrDraw || odds.homeOrAway) {
         html += `<div class="odds-section"><div class="odds-section-title">Double Chance</div><div class="odds-grid">${oddBtn('homeOrDraw', '1X', odds.homeOrDraw)}${oddBtn('homeOrAway', '12', odds.homeOrAway)}${oddBtn('awayOrDraw', 'X2', odds.awayOrDraw)}</div></div>`;
     }
 
+    // ===== DRAW NO BET =====
+    if (odds.dnbHome || odds.dnbAway) {
+        html += `<div class="odds-section"><div class="odds-section-title">Draw No Bet</div><div class="odds-grid grid-2">${oddBtn('dnbHome', 'Home', odds.dnbHome)}${oddBtn('dnbAway', 'Away', odds.dnbAway)}</div></div>`;
+    }
+
+    // ===== ASIAN HANDICAP =====
+    let ahHtml = '';
+    if (odds.ahHome_minus25) ahHtml += oddBtn('ahHome_minus25', 'H -2.5', odds.ahHome_minus25);
+    if (odds.ahHome_minus2) ahHtml += oddBtn('ahHome_minus2', 'H -2', odds.ahHome_minus2);
+    if (odds.ahHome_minus15) ahHtml += oddBtn('ahHome_minus15', 'H -1.5', odds.ahHome_minus15);
+    if (odds.ahHome_minus1) ahHtml += oddBtn('ahHome_minus1', 'H -1', odds.ahHome_minus1);
+    if (odds.ahHome_minus05) ahHtml += oddBtn('ahHome_minus05', 'H -0.5', odds.ahHome_minus05);
+    if (odds.ahHome_plus05) ahHtml += oddBtn('ahHome_plus05', 'H +0.5', odds.ahHome_plus05);
+    if (odds.ahHome_plus1) ahHtml += oddBtn('ahHome_plus1', 'H +1', odds.ahHome_plus1);
+    if (odds.ahHome_plus15) ahHtml += oddBtn('ahHome_plus15', 'H +1.5', odds.ahHome_plus15);
+    if (odds.ahHome_plus2) ahHtml += oddBtn('ahHome_plus2', 'H +2', odds.ahHome_plus2);
+    if (odds.ahAway_minus25) ahHtml += oddBtn('ahAway_minus25', 'A -2.5', odds.ahAway_minus25);
+    if (odds.ahAway_minus2) ahHtml += oddBtn('ahAway_minus2', 'A -2', odds.ahAway_minus2);
+    if (odds.ahAway_minus15) ahHtml += oddBtn('ahAway_minus15', 'A -1.5', odds.ahAway_minus15);
+    if (odds.ahAway_minus1) ahHtml += oddBtn('ahAway_minus1', 'A -1', odds.ahAway_minus1);
+    if (odds.ahAway_minus05) ahHtml += oddBtn('ahAway_minus05', 'A -0.5', odds.ahAway_minus05);
+    if (odds.ahAway_plus05) ahHtml += oddBtn('ahAway_plus05', 'A +0.5', odds.ahAway_plus05);
+    if (odds.ahAway_plus1) ahHtml += oddBtn('ahAway_plus1', 'A +1', odds.ahAway_plus1);
+    if (odds.ahAway_plus15) ahHtml += oddBtn('ahAway_plus15', 'A +1.5', odds.ahAway_plus15);
+    if (odds.ahAway_plus2) ahHtml += oddBtn('ahAway_plus2', 'A +2', odds.ahAway_plus2);
+    if (ahHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Asian Handicap</div><div class="odds-grid grid-4">${ahHtml}</div></div>`;
+    }
+
+    // ===== GOALS OVER/UNDER (FULL TIME) =====
     let goalsHtml = '';
     if (odds.over05) goalsHtml += oddBtn('over05', 'O0.5', odds.over05);
     if (odds.over15) goalsHtml += oddBtn('over15', 'O1.5', odds.over15);
     if (odds.over25) goalsHtml += oddBtn('over25', 'O2.5', odds.over25);
     if (odds.over35) goalsHtml += oddBtn('over35', 'O3.5', odds.over35);
+    if (odds.over45) goalsHtml += oddBtn('over45', 'O4.5', odds.over45);
+    if (odds.over55) goalsHtml += oddBtn('over55', 'O5.5', odds.over55);
+    if (odds.under05) goalsHtml += oddBtn('under05', 'U0.5', odds.under05);
     if (odds.under15) goalsHtml += oddBtn('under15', 'U1.5', odds.under15);
     if (odds.under25) goalsHtml += oddBtn('under25', 'U2.5', odds.under25);
     if (odds.under35) goalsHtml += oddBtn('under35', 'U3.5', odds.under35);
-    if (goalsHtml) html += `<div class="odds-section"><div class="odds-section-title">Goals</div><div class="odds-grid grid-4">${goalsHtml}</div></div>`;
-
-    if (odds.bttsYes || odds.bttsNo) {
-        html += `<div class="odds-section"><div class="odds-section-title">Both Teams to Score</div><div class="odds-grid grid-2">${oddBtn('bttsYes', 'Yes', odds.bttsYes)}${oddBtn('bttsNo', 'No', odds.bttsNo)}</div></div>`;
+    if (odds.under45) goalsHtml += oddBtn('under45', 'U4.5', odds.under45);
+    if (odds.under55) goalsHtml += oddBtn('under55', 'U5.5', odds.under55);
+    if (goalsHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Goals Over/Under</div><div class="odds-grid grid-6">${goalsHtml}</div></div>`;
     }
 
-    if (odds.bookmaker) html += `<div class="bookmaker-tag">via ${odds.bookmaker}</div>`;
-    return html;
+    // ===== GOALS OVER/UNDER (FIRST HALF) =====
+    let goalsFHHtml = '';
+    if (odds.over05FH) goalsFHHtml += oddBtn('over05FH', 'O0.5', odds.over05FH);
+    if (odds.over15FH) goalsFHHtml += oddBtn('over15FH', 'O1.5', odds.over15FH);
+    if (odds.over25FH) goalsFHHtml += oddBtn('over25FH', 'O2.5', odds.over25FH);
+    if (odds.under05FH) goalsFHHtml += oddBtn('under05FH', 'U0.5', odds.under05FH);
+    if (odds.under15FH) goalsFHHtml += oddBtn('under15FH', 'U1.5', odds.under15FH);
+    if (odds.under25FH) goalsFHHtml += oddBtn('under25FH', 'U2.5', odds.under25FH);
+    if (goalsFHHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Goals - First Half</div><div class="odds-grid grid-6">${goalsFHHtml}</div></div>`;
+    }
+
+    // ===== GOALS OVER/UNDER (SECOND HALF) =====
+    let goalsSHHtml = '';
+    if (odds.over05SH) goalsSHHtml += oddBtn('over05SH', 'O0.5', odds.over05SH);
+    if (odds.over15SH) goalsSHHtml += oddBtn('over15SH', 'O1.5', odds.over15SH);
+    if (odds.over25SH) goalsSHHtml += oddBtn('over25SH', 'O2.5', odds.over25SH);
+    if (odds.under05SH) goalsSHHtml += oddBtn('under05SH', 'U0.5', odds.under05SH);
+    if (odds.under15SH) goalsSHHtml += oddBtn('under15SH', 'U1.5', odds.under15SH);
+    if (odds.under25SH) goalsSHHtml += oddBtn('under25SH', 'U2.5', odds.under25SH);
+    if (goalsSHHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Goals - Second Half</div><div class="odds-grid grid-6">${goalsSHHtml}</div></div>`;
+    }
+
+    // ===== BOTH TEAMS TO SCORE =====
+    let bttsHtml = '';
+    if (odds.bttsYes) bttsHtml += oddBtn('bttsYes', 'Yes', odds.bttsYes);
+    if (odds.bttsNo) bttsHtml += oddBtn('bttsNo', 'No', odds.bttsNo);
+    if (bttsHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Both Teams to Score</div><div class="odds-grid grid-2">${bttsHtml}</div></div>`;
+    }
+
+    // ===== BTTS - FIRST HALF =====
+    let bttsFHHtml = '';
+    if (odds.bttsFHYes) bttsFHHtml += oddBtn('bttsFHYes', 'Yes', odds.bttsFHYes);
+    if (odds.bttsFHNo) bttsFHHtml += oddBtn('bttsFHNo', 'No', odds.bttsFHNo);
+    if (bttsFHHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">BTTS - First Half</div><div class="odds-grid grid-2">${bttsFHHtml}</div></div>`;
+    }
+
+    // ===== BTTS - SECOND HALF =====
+    let bttsSHHtml = '';
+    if (odds.bttsSHYes) bttsSHHtml += oddBtn('bttsSHYes', 'Yes', odds.bttsSHYes);
+    if (odds.bttsSHNo) bttsSHHtml += oddBtn('bttsSHNo', 'No', odds.bttsSHNo);
+    if (bttsSHHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">BTTS - Second Half</div><div class="odds-grid grid-2">${bttsSHHtml}</div></div>`;
+    }
+
+    // ===== HALF TIME RESULT =====
+    if (odds.htHome || odds.htDraw || odds.htAway) {
+        html += `<div class="odds-section"><div class="odds-section-title">Half Time Result</div><div class="odds-grid">${oddBtn('htHome', '1', odds.htHome)}${oddBtn('htDraw', 'X', odds.htDraw)}${oddBtn('htAway', '2', odds.htAway)}</div></div>`;
+    }
+
+    // ===== SECOND HALF WINNER =====
+    if (odds.shHome || odds.shDraw || odds.shAway) {
+        html += `<div class="odds-section"><div class="odds-section-title">Second Half Winner</div><div class="odds-grid">${oddBtn('shHome', '1', odds.shHome)}${oddBtn('shDraw', 'X', odds.shDraw)}${oddBtn('shAway', '2', odds.shAway)}</div></div>`;
+    }
+
+    // ===== HOME TEAM GOALS =====
+    let homeGoalsHtml = '';
+    if (odds.homeOver05) homeGoalsHtml += oddBtn('homeOver05', 'O0.5', odds.homeOver05);
+    if (odds.homeOver15) homeGoalsHtml += oddBtn('homeOver15', 'O1.5', odds.homeOver15);
+    if (odds.homeOver25) homeGoalsHtml += oddBtn('homeOver25', 'O2.5', odds.homeOver25);
+    if (odds.homeUnder05) homeGoalsHtml += oddBtn('homeUnder05', 'U0.5', odds.homeUnder05);
+    if (odds.homeUnder15) homeGoalsHtml += oddBtn('homeUnder15', 'U1.5', odds.homeUnder15);
+    if (odds.homeUnder25) homeGoalsHtml += oddBtn('homeUnder25', 'U2.5', odds.homeUnder25);
+    if (homeGoalsHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Home Team Goals</div><div class="odds-grid grid-6">${homeGoalsHtml}</div></div>`;
+    }
+
+    // ===== AWAY TEAM GOALS =====
+    let awayGoalsHtml = '';
+    if (odds.awayOver05) awayGoalsHtml += oddBtn('awayOver05', 'O0.5', odds.awayOver05);
+    if (odds.awayOver15) awayGoalsHtml += oddBtn('awayOver15', 'O1.5', odds.awayOver15);
+    if (odds.awayOver25) awayGoalsHtml += oddBtn('awayOver25', 'O2.5', odds.awayOver25);
+    if (odds.awayUnder05) awayGoalsHtml += oddBtn('awayUnder05', 'U0.5', odds.awayUnder05);
+    if (odds.awayUnder15) awayGoalsHtml += oddBtn('awayUnder15', 'U1.5', odds.awayUnder15);
+    if (odds.awayUnder25) awayGoalsHtml += oddBtn('awayUnder25', 'U2.5', odds.awayUnder25);
+    if (awayGoalsHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Away Team Goals</div><div class="odds-grid grid-6">${awayGoalsHtml}</div></div>`;
+    }
+
+    // ===== CLEAN SHEET =====
+    let csHtml = '';
+    if (odds.csHome) csHtml += oddBtn('csHome', 'Home Yes', odds.csHome);
+    if (odds.noCSHome) csHtml += oddBtn('noCSHome', 'Home No', odds.noCSHome);
+    if (odds.csAway) csHtml += oddBtn('csAway', 'Away Yes', odds.csAway);
+    if (odds.noCSAway) csHtml += oddBtn('noCSAway', 'Away No', odds.noCSAway);
+    if (csHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Clean Sheet</div><div class="odds-grid grid-4">${csHtml}</div></div>`;
+    }
+
+    // ===== WIN TO NIL =====
+    let wtnHtml = '';
+    if (odds.wtnHome) wtnHtml += oddBtn('wtnHome', 'Home', odds.wtnHome);
+    if (odds.wtnAway) wtnHtml += oddBtn('wtnAway', 'Away', odds.wtnAway);
+    if (wtnHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Win to Nil</div><div class="odds-grid grid-2">${wtnHtml}</div></div>`;
+    }
+
+    // ===== SCORE BOTH HALVES =====
+    let scoreBothHtml = '';
+    if (odds.homeScoreBoth) scoreBothHtml += oddBtn('homeScoreBoth', 'Home', odds.homeScoreBoth);
+    if (odds.awayScoreBoth) scoreBothHtml += oddBtn('awayScoreBoth', 'Away', odds.awayScoreBoth);
+    if (scoreBothHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Score Both Halves</div><div class="odds-grid grid-2">${scoreBothHtml}</div></div>`;
+    }
+
+    // ===== WIN EITHER HALF =====
+    let winEitherHtml = '';
+    if (odds.homeWinEither) winEitherHtml += oddBtn('homeWinEither', 'Home', odds.homeWinEither);
+    if (odds.awayWinEither) winEitherHtml += oddBtn('awayWinEither', 'Away', odds.awayWinEither);
+    if (winEitherHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Win Either Half</div><div class="odds-grid grid-2">${winEitherHtml}</div></div>`;
+    }
+
+    // ===== ODD/EVEN =====
+    if (odds.goalsOdd || odds.goalsEven) {
+        html += `<div class="odds-section"><div class="odds-section-title">Odd/Even Goals</div><div class="odds-grid grid-2">${oddBtn('goalsOdd', 'Odd', odds.goalsOdd)}${oddBtn('goalsEven', 'Even', odds.goalsEven)}</div></div>`;
+    }
+
+    // ===== EXACT GOALS =====
+    let exactHtml = '';
+    if (odds.exactGoals0) exactHtml += oddBtn('exactGoals0', '0', odds.exactGoals0);
+    if (odds.exactGoals1) exactHtml += oddBtn('exactGoals1', '1', odds.exactGoals1);
+    if (odds.exactGoals2) exactHtml += oddBtn('exactGoals2', '2', odds.exactGoals2);
+    if (odds.exactGoals3) exactHtml += oddBtn('exactGoals3', '3', odds.exactGoals3);
+    if (odds.exactGoals4plus) exactHtml += oddBtn('exactGoals4plus', '4+', odds.exactGoals4plus);
+    if (exactHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Exact Goals</div><div class="odds-grid grid-5">${exactHtml}</div></div>`;
+    }
+
+    // ===== HT/FT =====
+    let htftHtml = '';
+    if (odds.htft_1_1) htftHtml += oddBtn('htft_1_1', '1/1', odds.htft_1_1);
+    if (odds.htft_1_X) htftHtml += oddBtn('htft_1_X', '1/X', odds.htft_1_X);
+    if (odds.htft_1_2) htftHtml += oddBtn('htft_1_2', '1/2', odds.htft_1_2);
+    if (odds.htft_X_1) htftHtml += oddBtn('htft_X_1', 'X/1', odds.htft_X_1);
+    if (odds.htft_X_X) htftHtml += oddBtn('htft_X_X', 'X/X', odds.htft_X_X);
+    if (odds.htft_X_2) htftHtml += oddBtn('htft_X_2', 'X/2', odds.htft_X_2);
+    if (odds.htft_2_1) htftHtml += oddBtn('htft_2_1', '2/1', odds.htft_2_1);
+    if (odds.htft_2_X) htftHtml += oddBtn('htft_2_X', '2/X', odds.htft_2_X);
+    if (odds.htft_2_2) htftHtml += oddBtn('htft_2_2', '2/2', odds.htft_2_2);
+    if (htftHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Half Time / Full Time</div><div class="odds-grid">${htftHtml}</div></div>`;
+    }
+
+    // ===== RESULT & BTTS =====
+    let resBttsHtml = '';
+    if (odds.homeAndBttsYes) resBttsHtml += oddBtn('homeAndBttsYes', 'H+Yes', odds.homeAndBttsYes);
+    if (odds.homeAndBttsNo) resBttsHtml += oddBtn('homeAndBttsNo', 'H+No', odds.homeAndBttsNo);
+    if (odds.drawAndBttsYes) resBttsHtml += oddBtn('drawAndBttsYes', 'D+Yes', odds.drawAndBttsYes);
+    if (odds.awayAndBttsYes) resBttsHtml += oddBtn('awayAndBttsYes', 'A+Yes', odds.awayAndBttsYes);
+    if (odds.awayAndBttsNo) resBttsHtml += oddBtn('awayAndBttsNo', 'A+No', odds.awayAndBttsNo);
+    if (resBttsHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Result & BTTS</div><div class="odds-grid grid-5">${resBttsHtml}</div></div>`;
+    }
+
+    // ===== RESULT & OVER =====
+    let resOverHtml = '';
+    if (odds.homeAndOver15) resOverHtml += oddBtn('homeAndOver15', 'H+O1.5', odds.homeAndOver15);
+    if (odds.homeAndOver25) resOverHtml += oddBtn('homeAndOver25', 'H+O2.5', odds.homeAndOver25);
+    if (odds.drawAndOver15) resOverHtml += oddBtn('drawAndOver15', 'D+O1.5', odds.drawAndOver15);
+    if (odds.drawAndOver25) resOverHtml += oddBtn('drawAndOver25', 'D+O2.5', odds.drawAndOver25);
+    if (odds.awayAndOver15) resOverHtml += oddBtn('awayAndOver15', 'A+O1.5', odds.awayAndOver15);
+    if (odds.awayAndOver25) resOverHtml += oddBtn('awayAndOver25', 'A+O2.5', odds.awayAndOver25);
+    if (resOverHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Result & Over</div><div class="odds-grid grid-6">${resOverHtml}</div></div>`;
+    }
+
+    // ===== CORNERS =====
+    let cornersHtml = '';
+    if (odds.cornersOver75) cornersHtml += oddBtn('cornersOver75', 'O7.5', odds.cornersOver75);
+    if (odds.cornersOver85) cornersHtml += oddBtn('cornersOver85', 'O8.5', odds.cornersOver85);
+    if (odds.cornersOver95) cornersHtml += oddBtn('cornersOver95', 'O9.5', odds.cornersOver95);
+    if (odds.cornersOver105) cornersHtml += oddBtn('cornersOver105', 'O10.5', odds.cornersOver105);
+    if (odds.cornersUnder75) cornersHtml += oddBtn('cornersUnder75', 'U7.5', odds.cornersUnder75);
+    if (odds.cornersUnder85) cornersHtml += oddBtn('cornersUnder85', 'U8.5', odds.cornersUnder85);
+    if (odds.cornersUnder95) cornersHtml += oddBtn('cornersUnder95', 'U9.5', odds.cornersUnder95);
+    if (odds.cornersUnder105) cornersHtml += oddBtn('cornersUnder105', 'U10.5', odds.cornersUnder105);
+    if (cornersHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Corners</div><div class="odds-grid grid-4">${cornersHtml}</div></div>`;
+    }
+
+    // ===== CARDS =====
+    let cardsHtml = '';
+    if (odds.cardsOver25) cardsHtml += oddBtn('cardsOver25', 'O2.5', odds.cardsOver25);
+    if (odds.cardsOver35) cardsHtml += oddBtn('cardsOver35', 'O3.5', odds.cardsOver35);
+    if (odds.cardsOver45) cardsHtml += oddBtn('cardsOver45', 'O4.5', odds.cardsOver45);
+    if (odds.cardsUnder25) cardsHtml += oddBtn('cardsUnder25', 'U2.5', odds.cardsUnder25);
+    if (odds.cardsUnder35) cardsHtml += oddBtn('cardsUnder35', 'U3.5', odds.cardsUnder35);
+    if (odds.cardsUnder45) cardsHtml += oddBtn('cardsUnder45', 'U4.5', odds.cardsUnder45);
+    if (cardsHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Cards</div><div class="odds-grid grid-6">${cardsHtml}</div></div>`;
+    }
+
+    // ===== GOAL LINE (Asian Total) =====
+    let glHtml = '';
+    if (odds.gl_over15) glHtml += oddBtn('gl_over15', 'O1.5', odds.gl_over15);
+    if (odds.gl_under15) glHtml += oddBtn('gl_under15', 'U1.5', odds.gl_under15);
+    if (odds.gl_over25) glHtml += oddBtn('gl_over25', 'O2.5', odds.gl_over25);
+    if (odds.gl_under25) glHtml += oddBtn('gl_under25', 'U2.5', odds.gl_under25);
+    if (odds.gl_over35) glHtml += oddBtn('gl_over35', 'O3.5', odds.gl_over35);
+    if (odds.gl_under35) glHtml += oddBtn('gl_under35', 'U3.5', odds.gl_under35);
+    if (glHtml) {
+        html += `<div class="odds-section"><div class="odds-section-title">Goal Line (Asian)</div><div class="odds-grid grid-6">${glHtml}</div></div>`;
+    }
+
+    // Bookmaker tag
+    if (odds.bookmaker) {
+        html += `<div class="bookmaker-tag">via ${odds.bookmaker}</div>`;
+    }
+
+    return html || '<div class="text-muted" style="font-size:0.7rem;text-align:center;padding:10px;">No odds available</div>';
 }
 
 // ============================================================
