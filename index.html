@@ -1444,6 +1444,76 @@
             border-top: 1px solid var(--border-color);
         }
 
+        /* Smart Recommendations */
+        .smart-bet {
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--accent-green);
+            transition: all 0.3s;
+        }
+        
+        .smart-bet:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .smart-bet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .smart-bet-odds {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+        
+        .smart-bet-confidence {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .smart-bet-confidence.high { 
+            background: rgba(0,212,170,0.2); 
+            color: var(--accent-green); 
+        }
+        
+        .smart-bet-confidence.medium { 
+            background: rgba(255,159,67,0.2); 
+            color: var(--accent-orange); 
+        }
+        
+        .smart-bet-confidence.low { 
+            background: rgba(255,107,107,0.2); 
+            color: var(--accent-red); 
+        }
+        
+        .smart-bet-legs {
+            font-size: 0.8rem;
+            margin: 8px 0;
+        }
+        
+        .smart-bet-leg {
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .smart-bet-leg:last-child {
+            border-bottom: none;
+        }
+        
+        .smart-bet-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
         /* Buttons */
         .btn {
             padding: 7px 14px;
@@ -1868,6 +1938,32 @@
                     <div class="metric-box"><div class="metric-value green" id="mWins">2</div><div class="metric-label">Wins</div></div>
                     <div class="metric-box"><div class="metric-value red" id="mLosses">0</div><div class="metric-label">Losses</div></div>
                     <div class="metric-box"><div class="metric-value blue" id="mBestDay">Day 2</div><div class="metric-label">Best Day</div></div>
+                    <div class="metric-box"><div class="metric-value orange" id="mStreak">2</div><div class="metric-label">Streak</div></div>
+		            <div class="card">
+						<div class="card-header">
+						<span class="card-title">🤖 Smart Recommendations</span>
+						<button class="btn btn-sm btn-primary" onclick="generateSmartBets()">🔄 Generate</button>
+                </div>
+                <div class="smart-bets-container" id="smartBetsContainer">
+                    <div class="loading"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+            <!-- Challenge Progress -->
+            <div class="card">
+                <div class="card-header"><span class="card-title">📈 Challenge Progress</span></div>
+                <div class="progress-container">
+                    <div class="progress-header">
+                        <span class="progress-label">Progress to £9,201.82</span>
+                        <span class="progress-value" id="progressPercent">4.2%</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 4.2%">4.2%</div></div>
+                </div>
+                <div class="streak-container"><div class="streak-grid" id="streakDisplay"></div></div>
+                <div class="metrics-grid">
+                    <div class="metric-box"><div class="metric-value green" id="mWins">2</div><div class="metric-label">Wins</div></div>
+                    <div class="metric-box"><div class="metric-value red" id="mLosses">0</div><div class="metric-label">Losses</div></div>
+                    <div class="metric-box"><div class="metric-value blue" id="mBestDay">Day 2</div><div class="metric-label">Best Day</div></div>
                     <div class="metric-box"><div class="metric-value orange" id="mStreak">2</div><div class="metric-label">Win Streak</div></div>
                 </div>
             </div>
@@ -1925,15 +2021,15 @@
                 </div>
             </div>
 
-            <!-- Analytics -->
+            <!-- Enhanced Analytics -->
             <div class="card">
-                <div class="card-header"><span class="card-title">📉 Analytics</span></div>
+                <div class="card-header"><span class="card-title">📊 Advanced Analytics</span></div>
                 <div class="analytics-grid">
                     <div class="analytics-item"><div class="analytics-label">Total ROI</div><div class="analytics-value green" id="analyticsROI">92.2%</div></div>
                     <div class="analytics-item"><div class="analytics-label">Avg Stake</div><div class="analytics-value" id="analyticsAvgStake">£228.57</div></div>
-                    <div class="analytics-item"><div class="analytics-label">Best Market</div><div class="analytics-value" id="analyticsBestMarket">Home Win</div></div>
-                    <div class="analytics-item"><div class="analytics-label">Best Competition</div><div class="analytics-value" id="analyticsBestComp">EFL Cup</div></div>
-                    <div class="analytics-item"><div class="analytics-label">High Conf Accuracy</div><div class="analytics-value" id="analyticsHighConf">100%</div></div>
+                    <div class="analytics-item"><div class="analytics-label">Sharpe Ratio</div><div class="analytics-value" id="sharpeRatio">0.00</div></div>
+                    <div class="analytics-item"><div class="analytics-label">Kelly Fraction</div><div class="analytics-value" id="kellyFraction">25%</div></div>
+                    <div class="analytics-item"><div class="analytics-label">Value Index</div><div class="analytics-value" id="valueIndex">0.00</div></div>
                     <div class="analytics-item"><div class="analytics-label">Optimal Odds</div><div class="analytics-value" id="analyticsOptOdds">1.20-1.50</div></div>
                 </div>
                 <div class="market-stats" id="marketStats"></div>
@@ -2301,6 +2397,34 @@ const MARKET_TYPES = {
 const PREFERRED_BOOKMAKERS = ['Coral', 'Bet365', 'Ladbrokes', 'William Hill', 'Paddy Power', 'Betfair', 'Pinnacle', '1xBet'];
 
 // ============================================================
+// ENHANCED CONFIGURATION
+// ============================================================
+const MARKET_SUCCESS_RATES = {
+    'homeOrDraw': 0.82,
+    'awayOrDraw': 0.81,
+    'over05': 0.89,
+    'over15': 0.68,
+    'dnbHome': 0.73,
+    'dnbAway': 0.72,
+    'over05FH': 0.78,
+    'bttsNo': 0.65,
+    'home': 0.52,
+    'away': 0.26,
+    'draw': 0.22,
+    'over25': 0.54,
+    'bttsYes': 0.52
+};
+
+const TEAM_STRENGTH = {
+    'Manchester City': 95, 'Liverpool': 92, 'Arsenal': 90, 'Chelsea': 88,
+    'Real Madrid': 96, 'Barcelona': 93, 'Bayern Munich': 94, 'PSG': 91,
+    'Manchester United': 85, 'Tottenham': 84, 'Aston Villa': 83, 'Newcastle': 82,
+    'Borussia Dortmund': 86, 'RB Leipzig': 85, 'Bayer Leverkusen': 87, 'Atletico Madrid': 89,
+    'Inter Milan': 88, 'AC Milan': 86, 'Juventus': 85, 'Napoli': 84,
+    'Fenerbahce': 82, 'Galatasaray': 81, 'Besiktas': 80, 'Trabzonspor': 79
+};
+
+// ============================================================
 // STATE
 // ============================================================
 let db = null;
@@ -2319,7 +2443,7 @@ let selectedConfidence = 'medium';
 
 let challengeData = {
     startDate: "2025-12-15",
-    currentBalance: 384.42,
+    currentBalance: 503.59020000000004,
     bets: [
         {
             id: 1734291600001,
@@ -2359,6 +2483,27 @@ let challengeData = {
             balanceAfter: 384.42,
             targetForDay: 288,
             vsTarget: 96.42
+        },
+        {
+            id: 1765947790264,
+            date: "2025-12-17",
+            type: "double",
+            legs: [
+                { match: "Manchester City vs Brentford", selection: "Over 1.5", odds: 1.18, league: "EFL Cup", market: "over15" },
+                { match: "CF Talavera vs Real Madrid", selection: "Over 0.5", odds: 1.11, league: "Copa del Rey", market: "over05" }
+            ],
+            selection: "Over 1.5 + Over 0.5",
+            competition: "EFL Cup / Copa del Rey",
+            odds: 1.31,
+            stake: 384.42,
+            confidence: "medium",
+            status: "won",
+            finalScore: "",
+            day: 3,
+            returns: 503.59020000000004,
+            balanceAfter: 503.59020000000004,
+            targetForDay: 345.59999999999997,
+            vsTarget: 157.99020000000007
         }
     ],
     pendingBets: [],
@@ -2385,6 +2530,323 @@ function notify(message, type = 'info') {
 
 function escapeHtml(str) {
     return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+
+// ============================================================
+// ENHANCED UTILITIES
+// ============================================================
+function getTeamStrength(teamName) {
+    return TEAM_STRENGTH[teamName] || 
+           Object.keys(TEAM_STRENGTH).find(key => 
+               teamName.toLowerCase().includes(key.toLowerCase()))?.value || 70;
+}
+
+function calculateAdjustedProbability(odds, market, league, homeTeamName, awayTeamName) {
+    const baseProb = 1 / odds;
+    const marketFactor = MARKET_SUCCESS_RATES[market] || 0.65;
+    const homeStrength = getTeamStrength(homeTeamName);
+    const awayStrength = getTeamStrength(awayTeamName);
+    const strengthDiff = homeStrength - awayStrength;
+    const strengthFactor = 1 + (strengthDiff * 0.1); // 10% adjustment per strength unit
+    
+    return Math.min(0.95, baseProb * marketFactor * strengthFactor);
+}
+
+function calculateOptimalStake(balance, confidence, kellyFraction = 0.25) {
+    const baseStake = balance;
+    const confidenceMultipliers = {
+        'high': 1.0,
+        'medium': 0.75,
+        'low': 0.5
+    };
+    
+    return Math.min(balance, baseStake * confidenceMultipliers[confidence] * kellyFraction);
+}
+
+function getProgressiveStrategy(currentDay, currentBalance, target) {
+    const daysRemaining = TARGET_DAYS - currentDay;
+    const requiredGrowth = target / currentBalance;
+    const dailyGrowthNeeded = Math.pow(requiredGrowth, 1/daysRemaining);
+    
+    return {
+        minOdds: dailyGrowthNeeded,
+        maxRisk: Math.min(0.5, 0.8 / daysRemaining),
+        suggestedMarkets: daysRemaining > 10 ? ['over15', 'homeOrDraw', 'awayOrDraw'] : ['over05', 'homeOrDraw', 'dnbHome']
+    };
+}
+
+function analyzePatterns() {
+    const patterns = {
+        leaguePerformance: {},
+        marketPerformance: {},
+        timeOfDay: {},
+        oddsRangePerformance: {}
+    };
+    
+    challengeData.bets.forEach(bet => {
+        // League patterns
+        const league = bet.competition.split('/')[0].trim();
+        patterns.leaguePerformance[league] = patterns.leaguePerformance[league] || { wins: 0, total: 0 };
+        patterns.leaguePerformance[league].total++;
+        if (bet.status === 'won') patterns.leaguePerformance[league].wins++;
+        
+        // Market patterns
+        bet.legs?.forEach(leg => {
+            patterns.marketPerformance[leg.market] = patterns.marketPerformance[leg.market] || { wins: 0, total: 0 };
+            patterns.marketPerformance[leg.market].total++;
+            if (bet.status === 'won') patterns.marketPerformance[leg.market].wins++;
+        });
+        
+        // Odds range patterns
+        const range = bet.odds < 1.3 ? '1.20-1.30' : bet.odds < 1.5 ? '1.30-1.50' : '1.50+';
+        patterns.oddsRangePerformance[range] = patterns.oddsRangePerformance[range] || { wins: 0, total: 0 };
+        patterns.oddsRangePerformance[range].total++;
+        if (bet.status === 'won') patterns.oddsRangePerformance[range].wins++;
+    });
+    
+    return patterns;
+}
+
+function findOptimalBets(targetOdds = [1.20, 1.30], maxAccumulatorSize = 3) {
+    const optimalBets = [];
+    const todayFixtures = allFixtures.filter(f => {
+        const date = new Date(f.fixture.date).toISOString().split('T')[0];
+        return date === getToday();
+    });
+    
+    // Single bets in target range
+    todayFixtures.forEach(fixture => {
+        const odds = oddsCache[fixture.fixture.id];
+        if (!odds) return;
+        
+        const safeMarkets = [
+            { key: 'homeOrDraw', label: '1X', minProb: 0.75 },
+            { key: 'awayOrDraw', label: 'X2', minProb: 0.75 },
+            { key: 'over05', label: 'Over 0.5', minProb: 0.85 },
+            { key: 'over15', label: 'Over 1.5', minProb: 0.65 },
+            { key: 'dnbHome', label: 'DNB Home', minProb: 0.70 },
+            { key: 'dnbAway', label: 'DNB Away', minProb: 0.70 }
+        ];
+        
+        safeMarkets.forEach(market => {
+            if (odds[market.key] && 
+                odds[market.key] >= targetOdds[0] && 
+                odds[market.key] <= targetOdds[1]) {
+                
+                const impliedProb = 1 / odds[market.key];
+                const adjustedProb = calculateAdjustedProbability(
+                    odds[market.key], 
+                    market.key, 
+                    fixture.league.name,
+                    fixture.teams.home.name,
+                    fixture.teams.away.name
+                );
+                
+                if (adjustedProb >= market.minProb) {
+                    optimalBets.push({
+                        fixtureId: fixture.fixture.id,
+                        match: `${fixture.teams.home.name} vs ${fixture.teams.away.name}`,
+                        market: market.key,
+                        selection: MARKET_TYPES[market.key],
+                        odds: odds[market.key],
+                        impliedProbability: impliedProb,
+                        adjustedProbability: adjustedProb,
+                        league: LEAGUES[fixture.league.id]?.name || 'Unknown',
+                        confidence: adjustedProb > 0.8 ? 'high' : adjustedProb > 0.7 ? 'medium' : 'low',
+                        type: 'single'
+                    });
+                }
+            }
+        });
+    });
+    
+    // Generate accumulator combinations
+    if (optimalBets.length >= 2) {
+        const singles = optimalBets.filter(b => b.adjustedProbability > 0.75);
+        for (let i = 0; i < singles.length; i++) {
+            for (let j = i + 1; j < singles.length && j < i + maxAccumulatorSize; j++) {
+                const combinedOdds = singles[i].odds * singles[j].odds;
+                const combinedProb = singles[i].adjustedProbability * singles[j].adjustedProbability;
+                if (combinedOdds >= 1.20 && combinedOdds <= 1.50 && combinedProb > 0.65) {
+                    optimalBets.push({
+                        legs: [singles[i], singles[j]],
+                        combinedOdds: combinedOdds,
+                        impliedProbability: (singles[i].impliedProbability * singles[j].impliedProbability),
+                        adjustedProbability: combinedProb,
+                        type: 'double',
+                        confidence: singles[i].confidence === 'high' && singles[j].confidence === 'high' ? 'high' : 'medium'
+                    });
+                }
+            }
+        }
+    }
+    
+    return optimalBets.sort((a, b) => b.adjustedProbability - a.adjustedProbability);
+}
+
+function updateEnhancedAnalytics() {
+    const bets = challengeData.bets;
+    const wonBets = bets.filter(b => b.status === 'won');
+    
+    // Sharpe Ratio (risk-adjusted returns)
+    const returns = wonBets.map(b => (b.returns - b.stake) / b.stake);
+    const avgReturn = returns.length > 0 ? returns.reduce((a, b) => a + b, 0) / returns.length : 0;
+    const stdDev = returns.length > 1 ? Math.sqrt(returns.reduce((a, b) => a + Math.pow(b - avgReturn, 2), 0) / returns.length) : 0;
+    const sharpeRatio = stdDev > 0 ? avgReturn / stdDev : 0;
+    
+    // Kelly Criterion optimal stake
+    const winRate = bets.length > 0 ? wonBets.length / bets.length : 0;
+    const avgOdds = wonBets.length > 0 ? wonBets.reduce((a, b) => a + b.odds, 0) / wonBets.length : DAILY_MULTIPLIER;
+    const kellyFraction = winRate > 0 ? winRate - ((1 - winRate) / (avgOdds - 1)) : 0;
+    
+    // Value Index
+    const valueIndex = winRate * avgOdds;
+    
+    // Update UI
+    document.getElementById('sharpeRatio').textContent = sharpeRatio.toFixed(2);
+    document.getElementById('kellyFraction').textContent = `${Math.max(0, Math.min(kellyFraction * 100, 100)).toFixed(0)}%`;
+    document.getElementById('valueIndex').textContent = valueIndex.toFixed(2);
+}
+
+function generateSmartBets() {
+    const container = document.getElementById('smartBetsContainer');
+    container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+    
+    setTimeout(() => {
+        const optimalBets = findOptimalBets([1.20, 1.35], 3);
+        
+        if (optimalBets.length === 0) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div><p>No optimal bets found. Try adjusting filters.</p></div>';
+            return;
+        }
+        
+        const html = optimalBets.slice(0, 5).map(bet => {
+            if (bet.type === 'single') {
+                return `
+                    <div class="smart-bet">
+                        <div class="smart-bet-header">
+                            <span class="smart-bet-type">${bet.type.toUpperCase()}</span>
+                            <span class="smart-bet-odds">${bet.odds.toFixed(2)}</span>
+                            <span class="smart-bet-confidence ${bet.confidence}">${bet.confidence.toUpperCase()}</span>
+                        </div>
+                        <div class="smart-bet-legs">
+                            <div class="smart-bet-leg">
+                                <strong>${bet.selection}</strong><br>
+                                <small>${bet.match}</small><br>
+                                <small class="text-muted">${bet.league}</small>
+                            </div>
+                        </div>
+                        <div class="smart-bet-actions">
+                            <button class="btn btn-sm btn-primary" onclick="addSmartBetToSlip(${bet.fixtureId}, '${bet.market}', '${escapeHtml(bet.match.split(' vs ')[0])}', '${escapeHtml(bet.match.split(' vs ')[1])}', ${bet.odds}, '${escapeHtml(bet.league)}')">Add to Betslip</button>
+                            <button class="btn btn-sm btn-secondary" onclick="analyzeBet(${bet.fixtureId}, '${bet.market}')">Analyze</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="smart-bet">
+                        <div class="smart-bet-header">
+                            <span class="smart-bet-type">${bet.type.toUpperCase()}</span>
+                            <span class="smart-bet-odds">${bet.combinedOdds.toFixed(2)}</span>
+                            <span class="smart-bet-confidence ${bet.confidence}">${bet.confidence.toUpperCase()}</span>
+                        </div>
+                        <div class="smart-bet-legs">
+                            ${bet.legs.map(leg => `
+                                <div class="smart-bet-leg">
+                                    <strong>${leg.selection}</strong><br>
+                                    <small>${leg.match}</small>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="smart-bet-actions">
+                            <button class="btn btn-sm btn-primary" onclick="addSmartAccumulator(${JSON.stringify(bet.legs).replace(/'/g, "\\'")})">Add All</button>
+                            <button class="btn btn-sm btn-secondary" onclick="analyzeAccumulator(${JSON.stringify(bet.legs).replace(/'/g, "\\'")})">Analyze</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }).join('');
+        
+        container.innerHTML = html;
+    }, 500);
+}
+
+function addSmartBetToSlip(fixtureId, market, home, away, odds, league) {
+    toggleSelection(fixtureId, market, home, away, odds, league);
+    notify('Added to betslip!', 'success');
+}
+
+function addSmartAccumulator(legs) {
+    legs.forEach(leg => {
+        if (!betslip.some(s => s.fixtureId === leg.fixtureId && s.market === leg.market)) {
+            betslip.push({
+                fixtureId: leg.fixtureId,
+                market: leg.market,
+                home: leg.match.split(' vs ')[0],
+                away: leg.match.split(' vs ')[1],
+                league: leg.league,
+                selection: MARKET_TYPES[leg.market] || leg.market,
+                odds: leg.odds,
+                match: leg.match
+            });
+        }
+    });
+    applyFilters();
+    renderBetslip();
+    notify('Accumulator added to betslip!', 'success');
+}
+
+function analyzeBet(fixtureId, market) {
+    const fixture = allFixtures.find(f => f.fixture.id === fixtureId);
+    if (!fixture) return;
+    
+    const odds = oddsCache[fixtureId];
+    if (!odds) return;
+    
+    const oddValue = odds[market];
+    const impliedProb = 1 / oddValue;
+    const adjustedProb = calculateAdjustedProbability(oddValue, market, fixture.league.name, fixture.teams.home.name, fixture.teams.away.name);
+    const marketSuccessRate = MARKET_SUCCESS_RATES[market] || 0.65;
+    
+    alert(`Bet Analysis:\n\n` +
+          `Market: ${MARKET_TYPES[market]}\n` +
+          `Odds: ${oddValue.toFixed(2)}\n` +
+          `Implied Probability: ${(impliedProb * 100).toFixed(1)}%\n` +
+          `Market Success Rate: ${(marketSuccessRate * 100).toFixed(1)}%\n` +
+          `Adjusted Probability: ${(adjustedProb * 100).toFixed(1)}%\n` +
+          `Value: ${(adjustedProb - impliedProb > 0 ? '+' : '') + ((adjustedProb - impliedProb) * 100).toFixed(1)}%\n\n` +
+          `Recommendation: ${adjustedProb > 0.75 ? '✅ Strong Bet' : adjustedProb > 0.65 ? '🟡 Consider' : '🔴 Avoid'}`);
+}
+
+function analyzeAccumulator(legs) {
+    let totalImpliedProb = 1;
+    let totalAdjustedProb = 1;
+    let analysis = 'Accumulator Analysis:\n\n';
+    
+    legs.forEach((leg, index) => {
+        const fixture = allFixtures.find(f => f.fixture.id === leg.fixtureId);
+        const odds = oddsCache[leg.fixtureId];
+        const impliedProb = 1 / leg.odds;
+        const adjustedProb = calculateAdjustedProbability(leg.odds, leg.market, leg.league, leg.match.split(' vs ')[0], leg.match.split(' vs ')[1]);
+        
+        totalImpliedProb *= impliedProb;
+        totalAdjustedProb *= adjustedProb;
+        
+        analysis += `Leg ${index + 1}: ${leg.selection}\n` +
+                   `Odds: ${leg.odds.toFixed(2)} (${(impliedProb * 100).toFixed(1)}%)\n` +
+                   `Adjusted: ${(adjustedProb * 100).toFixed(1)}%\n\n`;
+    });
+    
+    const combinedOdds = legs.reduce((acc, leg) => acc * leg.odds, 1);
+    const value = totalAdjustedProb - totalImpliedProb;
+    
+    analysis += `Combined Odds: ${combinedOdds.toFixed(2)}\n` +
+                `Combined Implied Probability: ${(totalImpliedProb * 100).toFixed(1)}%\n` +
+                `Combined Adjusted Probability: ${(totalAdjustedProb * 100).toFixed(1)}%\n` +
+                `Value: ${(value * 100).toFixed(1)}%\n\n` +
+                `Recommendation: ${totalAdjustedProb > 0.65 ? '✅ Good Value' : '⚠️ Risky'}`;
+    
+    alert(analysis);
 }
 
 // ============================================================
@@ -2888,7 +3350,7 @@ function parseOdds(oddsData) {
                 if (v.value === 'Over 2.5') result.over25SH = parseFloat(v.odd);
                 if (v.value === 'Under 0.5') result.under05SH = parseFloat(v.odd);
                 if (v.value === 'Under 1.5') result.under15SH = parseFloat(v.odd);
-                if (v.value === 'Under 2.5') result.under25SH = parseFloat(v.odd);
+		        if (v.value === 'Under 2.5') result.under25SH = parseFloat(v.odd);
             });
         }
 
@@ -3859,11 +4321,12 @@ function updateAllUI() {
     updateMilestones();
     updateTargets();
     updateProbability();
-    updateAnalytics();
+    updateEnhancedAnalytics();
     updatePendingBets();
     updateHistory();
     updateChart();
     renderBetslip();
+    generateSmartBets();
 }
 
 function updateHeader() {
@@ -3960,6 +4423,9 @@ function updateStrategy() {
     document.getElementById('stratTarget').textContent = formatCurrency(target);
     document.getElementById('stratMinProfit').textContent = formatCurrency(minProfit);
 
+    // Progressive strategy
+    const progressive = getProgressiveStrategy(currentDay, stake, target);
+    
     let recommendation = '';
     if (stake <= 0) {
         recommendation = 'Challenge ended. Consider starting fresh with the Reset button.';
@@ -3974,6 +4440,10 @@ function updateStrategy() {
     } else {
         recommendation = `Significantly behind. May need to take calculated risks with doubles or higher odds singles.`;
     }
+    
+    // Add progressive strategy insights
+    recommendation += `\n\nProgressive Strategy:\n• Min Odds Needed: ${progressive.minOdds.toFixed(2)}\n• Max Risk: ${(progressive.maxRisk * 100).toFixed(0)}%\n• Suggested Markets: ${progressive.suggestedMarkets.join(', ')}`;
+    
     document.getElementById('strategyText').textContent = recommendation;
 }
 
@@ -4071,131 +4541,6 @@ function updateProbability() {
     
     const riskLevel = Math.min(100, Math.max(0, 100 - successProb));
     document.getElementById('riskIndicator').style.left = `${riskLevel}%`;
-}
-
-function updateAnalytics() {
-    const profit = challengeData.currentBalance - INITIAL_BALANCE;
-    const roi = (profit / INITIAL_BALANCE * 100);
-    
-    document.getElementById('analyticsROI').textContent = `${roi.toFixed(1)}%`;
-    document.getElementById('analyticsROI').className = `analytics-value ${roi >= 0 ? 'green' : 'red'}`;
-    
-    if (challengeData.bets.length > 0) {
-        const avgStake = challengeData.bets.reduce((a, b) => a + b.stake, 0) / challengeData.bets.length;
-        document.getElementById('analyticsAvgStake').textContent = formatCurrency(avgStake);
-        
-        const marketStats = {};
-        challengeData.bets.forEach(b => {
-            b.legs?.forEach(l => {
-                if (!marketStats[l.market]) marketStats[l.market] = { wins: 0, total: 0 };
-                marketStats[l.market].total++;
-                if (b.status === 'won') marketStats[l.market].wins++;
-            });
-        });
-        
-        let bestMarket = '-';
-        let bestMarketRate = 0;
-        Object.entries(marketStats).forEach(([market, stats]) => {
-            if (stats.total > 0) {
-                const rate = stats.wins / stats.total;
-                if (rate >= bestMarketRate) {
-                    bestMarketRate = rate;
-                    bestMarket = MARKET_TYPES[market] || market;
-                }
-            }
-        });
-        document.getElementById('analyticsBestMarket').textContent = bestMarket.length > 12 ? bestMarket.substring(0, 12) + '...' : bestMarket;
-        
-        const compStats = {};
-        challengeData.bets.forEach(b => {
-            const comp = b.competition?.split('/')[0]?.trim() || 'Unknown';
-            if (!compStats[comp]) compStats[comp] = { wins: 0, total: 0 };
-            compStats[comp].total++;
-            if (b.status === 'won') compStats[comp].wins++;
-        });
-        
-        let bestComp = '-';
-        let bestCompRate = 0;
-        Object.entries(compStats).forEach(([comp, stats]) => {
-		            if (stats.total > 0) {
-                const rate = stats.wins / stats.total;
-                if (rate >= bestCompRate) {
-                    bestCompRate = rate;
-                    bestComp = comp;
-                }
-            }
-        });
-        document.getElementById('analyticsBestComp').textContent = bestComp.length > 12 ? bestComp.substring(0, 12) + '...' : bestComp;
-        
-        const highConf = challengeData.bets.filter(b => b.confidence === 'high');
-        const highConfWins = highConf.filter(b => b.status === 'won').length;
-        document.getElementById('analyticsHighConf').textContent = highConf.length > 0 
-            ? `${Math.round(highConfWins / highConf.length * 100)}%` 
-            : '-';
-        
-        const oddsRanges = { '1.10-1.30': 0, '1.30-1.50': 0, '1.50-2.00': 0, '2.00+': 0 };
-        challengeData.bets.filter(b => b.status === 'won').forEach(b => {
-            if (b.odds < 1.30) oddsRanges['1.10-1.30']++;
-            else if (b.odds < 1.50) oddsRanges['1.30-1.50']++;
-            else if (b.odds < 2.00) oddsRanges['1.50-2.00']++;
-            else oddsRanges['2.00+']++;
-        });
-        
-        let optimalRange = '1.20-1.50';
-        let maxWins = 0;
-        Object.entries(oddsRanges).forEach(([range, wins]) => {
-            if (wins > maxWins) { maxWins = wins; optimalRange = range; }
-        });
-        document.getElementById('analyticsOptOdds').textContent = optimalRange;
-        
-        // Market stats display
-        const marketStatsHtml = Object.entries(marketStats)
-            .sort((a, b) => b[1].total - a[1].total)
-            .slice(0, 5)
-            .map(([market, stats]) => {
-                const rate = stats.total > 0 ? (stats.wins / stats.total * 100) : 0;
-                const color = rate >= 80 ? 'var(--accent-green)' : rate >= 50 ? 'var(--accent-orange)' : 'var(--accent-red)';
-                return `
-                    <div class="market-stat-row">
-                        <span class="market-stat-name">${MARKET_TYPES[market] || market}</span>
-                        <div class="market-stat-bar"><div class="market-stat-fill" style="width:${rate}%;background:${color}"></div></div>
-                        <span class="market-stat-value">${stats.wins}/${stats.total}</span>
-                    </div>
-                `;
-            }).join('');
-        
-        document.getElementById('marketStats').innerHTML = `
-            <div class="analytics-label mb-1">Market Performance</div>
-            ${marketStatsHtml || '<div class="text-muted" style="font-size:0.7rem;">No market data yet</div>'}
-        `;
-        
-        // Day performance chart
-        const maxProfit = Math.max(...challengeData.bets.map(b => Math.abs(b.returns - b.stake)), 1);
-        const dayPerfHtml = challengeData.bets.slice(-10).map(b => {
-            const profit = b.returns - b.stake;
-            const height = Math.abs(profit) / maxProfit * 45;
-            const color = profit >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-            return `
-                <div class="day-bar-container" title="Day ${b.day}: ${profit >= 0 ? '+' : ''}${formatCurrency(profit)}">
-                    <div class="day-bar" style="height:55px;">
-                        <div class="day-bar-fill" style="height:${height}px;background:${color};"></div>
-                    </div>
-                    <div class="day-bar-label">D${b.day}</div>
-                </div>
-            `;
-        }).join('');
-        
-        document.getElementById('dayPerformance').innerHTML = dayPerfHtml || '<div class="text-muted" style="width:100%;text-align:center;font-size:0.7rem;">No data yet</div>';
-        
-    } else {
-        document.getElementById('analyticsAvgStake').textContent = '-';
-        document.getElementById('analyticsBestMarket').textContent = '-';
-        document.getElementById('analyticsBestComp').textContent = '-';
-        document.getElementById('analyticsHighConf').textContent = '-';
-        document.getElementById('analyticsOptOdds').textContent = '-';
-        document.getElementById('marketStats').innerHTML = '<div class="analytics-label mb-1">Market Performance</div><div class="text-muted" style="font-size:0.7rem;">Place bets to see stats</div>';
-        document.getElementById('dayPerformance').innerHTML = '<div class="text-muted" style="width:100%;text-align:center;font-size:0.7rem;">No data yet</div>';
-    }
 }
 
 function updatePendingBets() {
